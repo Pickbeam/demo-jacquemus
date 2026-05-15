@@ -6,8 +6,7 @@
     "currency": "EUR",
     "category": "bag",
     "images": [
-      "https://cdn.shopify.com/s/files/1/0266/6812/files/chiquito-noir-1.jpg",
-      "https://cdn.shopify.com/s/files/1/0266/6812/files/chiquito-noir-2.jpg"
+      "https://picsum.photos/seed/chiquito-noir/400/500"
     ],
     "sizes": [],
     "tags": [
@@ -27,8 +26,7 @@
     "currency": "EUR",
     "category": "bag",
     "images": [
-      "https://cdn.shopify.com/s/files/1/0266/6812/files/bambino-noir-verni-1.jpg",
-      "https://cdn.shopify.com/s/files/1/0266/6812/files/bambino-noir-verni-2.jpg"
+      "https://picsum.photos/seed/bambino-verni/400/500"
     ],
     "sizes": [],
     "tags": [
@@ -48,8 +46,7 @@
     "currency": "EUR",
     "category": "bag",
     "images": [
-      "https://cdn.shopify.com/s/files/1/0266/6812/files/bambino-large-1.jpg",
-      "https://cdn.shopify.com/s/files/1/0266/6812/files/bambino-large-2.jpg"
+      "https://picsum.photos/seed/bambino-large/400/500"
     ],
     "sizes": [],
     "tags": [
@@ -69,8 +66,7 @@
     "currency": "EUR",
     "category": "bag",
     "images": [
-      "https://cdn.shopify.com/s/files/1/0266/6812/files/citron-1.jpg",
-      "https://cdn.shopify.com/s/files/1/0266/6812/files/citron-2.jpg"
+      "https://picsum.photos/seed/le-citron/400/500"
     ],
     "sizes": [],
     "tags": [
@@ -91,8 +87,7 @@
     "currency": "EUR",
     "category": "bag",
     "images": [
-      "https://cdn.shopify.com/s/files/1/0266/6812/files/banane-1.jpg",
-      "https://cdn.shopify.com/s/files/1/0266/6812/files/banane-2.jpg"
+      "https://picsum.photos/seed/le-banane/400/500"
     ],
     "sizes": [],
     "tags": [
@@ -113,8 +108,7 @@
     "currency": "EUR",
     "category": "bag",
     "images": [
-      "https://cdn.shopify.com/s/files/1/0266/6812/files/tomate-1.jpg",
-      "https://cdn.shopify.com/s/files/1/0266/6812/files/tomate-2.jpg"
+      "https://picsum.photos/seed/le-tomate/400/500"
     ],
     "sizes": [],
     "tags": [
@@ -135,8 +129,7 @@
     "currency": "EUR",
     "category": "bag",
     "images": [
-      "https://cdn.shopify.com/s/files/1/0266/6812/files/cabas-noir-1.jpg",
-      "https://cdn.shopify.com/s/files/1/0266/6812/files/cabas-noir-2.jpg"
+      "https://picsum.photos/seed/cabas-noir/400/500"
     ],
     "sizes": [],
     "tags": [
@@ -153,16 +146,9 @@
     "currency": "EUR",
     "category": "dress",
     "images": [
-      "https://cdn.shopify.com/s/files/1/0266/6812/files/bomba-1.jpg",
-      "https://cdn.shopify.com/s/files/1/0266/6812/files/bomba-2.jpg"
+      "https://picsum.photos/seed/la-bomba/400/600"
     ],
-    "sizes": [
-      "34",
-      "36",
-      "38",
-      "40",
-      "42"
-    ],
+    "sizes": ["34", "36", "38", "40", "42"],
     "tags": [
       "category:dress",
       "mood:romantic",
@@ -181,16 +167,9 @@
     "currency": "EUR",
     "category": "dress",
     "images": [
-      "https://cdn.shopify.com/s/files/1/0266/6812/files/souffle-1.jpg",
-      "https://cdn.shopify.com/s/files/1/0266/6812/files/souffle-2.jpg"
+      "https://picsum.photos/seed/le-souffle/400/600"
     ],
-    "sizes": [
-      "34",
-      "36",
-      "38",
-      "40",
-      "42"
-    ],
+    "sizes": ["34", "36", "38", "40", "42"],
     "tags": [
       "category:dress",
       "mood:sensual",
@@ -208,16 +187,9 @@
     "currency": "EUR",
     "category": "dress",
     "images": [
-      "https://cdn.shopify.com/s/files/1/0266/6812/files/riviera-1.jpg",
-      "https://cdn.shopify.com/s/files/1/0266/6812/files/riviera-2.jpg"
+      "https://picsum.photos/seed/la-riviera/400/600"
     ],
-    "sizes": [
-      "34",
-      "36",
-      "38",
-      "40",
-      "42"
-    ],
+    "sizes": ["34", "36", "38", "40", "42"],
     "tags": [
       "category:dress",
       "mood:sophisticated",
@@ -235,18 +207,9 @@
     "currency": "EUR",
     "category": "shoes",
     "images": [
-      "https://cdn.shopify.com/s/files/1/0266/6812/files/pralu-1.jpg",
-      "https://cdn.shopify.com/s/files/1/0266/6812/files/pralu-2.jpg"
+      "https://picsum.photos/seed/les-pralu/400/400"
     ],
-    "sizes": [
-      "35",
-      "36",
-      "37",
-      "38",
-      "39",
-      "40",
-      "41"
-    ],
+    "sizes": ["35", "36", "37", "38", "39", "40", "41"],
     "tags": [
       "category:shoes",
       "mood:playful",
@@ -264,18 +227,9 @@
     "currency": "EUR",
     "category": "shoes",
     "images": [
-      "https://cdn.shopify.com/s/files/1/0266/6812/files/classiques-1.jpg",
-      "https://cdn.shopify.com/s/files/1/0266/6812/files/classiques-2.jpg"
+      "https://picsum.photos/seed/les-classiques/400/400"
     ],
-    "sizes": [
-      "35",
-      "36",
-      "37",
-      "38",
-      "39",
-      "40",
-      "41"
-    ],
+    "sizes": ["35", "36", "37", "38", "39", "40", "41"],
     "tags": [
       "category:shoes",
       "mood:minimalist",
