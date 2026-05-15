@@ -6,10 +6,6 @@ import {AddToCartButton} from '~/components/AddToCartButton';
 import {searchShopCatalog} from '~/lib/mcp-client';
 import type {CatalogProduct} from '~/routes/api.catalog-search';
 
-export const meta: MetaFunction = () => [
-  {title: 'Personal Shopper — JACQUEMUS'},
-];
-
 const PERSONAL_SHOPPER_PRODUCTS_QUERY = `#graphql
   query PersonalShopperProducts($first: Int!) {
     products(first: $first) {
@@ -31,6 +27,10 @@ const PERSONAL_SHOPPER_PRODUCTS_QUERY = `#graphql
     }
   }
 ` as const;
+
+export const meta: MetaFunction = () => [
+  {title: 'Personal Shopper — JACQUEMUS'},
+];
 
 export async function loader({context}: Route.LoaderArgs) {
   const data = await context.storefront.query(
@@ -631,7 +631,7 @@ export default function PersonalShopperPage() {
         price: r.price,
         image: r.image,
         description: r.description,
-        variantId: (r as unknown as {variantId?: string}).variantId ?? '',
+        variantId: r.variantId,
       }));
 
       setMessages((prev) => [
