@@ -191,20 +191,20 @@ export async function action({request, context}) {
   }).handle(request);
 }`,
 
-  mcpClient: `// app/lib/mock-mcp-client.ts
+  mcpClient: `// app/lib/mcp-client.ts
 // Client typé pour appeler le MCP Storefront
 export async function searchShopCatalog(
   payload: MCPSearchPayload,
   onLog?: (entry: MCPLogEntry) => void,
-): Promise<MockProduct[]> {
+): Promise<Product[]> {
   onLog?.({ direction: 'request', method: 'search_shop_catalog', payload });
 
-  const res = await fetch('/api/mcp', {
+  const res = await fetch('/api/catalog-search', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({
-      method: 'search_shop_catalog',
-      params: payload,
+      query: payload.query,
+      filters: payload.filters,
     }),
   });
 
@@ -366,7 +366,7 @@ function SourceModal({onClose}: {onClose: () => void}) {
 
   const tabs: Array<{key: 'route' | 'client' | 'component'; label: string}> = [
     {key: 'route', label: 'api.mcp.tsx'},
-    {key: 'client', label: 'mock-mcp-client.ts'},
+    {key: 'client', label: 'mcp-client.ts'},
     {key: 'component', label: 'Component call'},
   ];
 
