@@ -1,0 +1,289 @@
+[
+  {
+    "title": "Le Chiquito Noir",
+    "description": "The iconic Jacquemus micro bag in sleek black leather. A minimalist silhouette with a structured shape, magnetic closure and adjustable strap.",
+    "price": 590,
+    "currency": "EUR",
+    "category": "bag",
+    "images": [
+      "https://cdn.shopify.com/s/files/1/0266/6812/files/chiquito-noir-1.jpg",
+      "https://cdn.shopify.com/s/files/1/0266/6812/files/chiquito-noir-2.jpg"
+    ],
+    "sizes": [],
+    "tags": [
+      "category:bag",
+      "mood:chic",
+      "mood:minimalist",
+      "occasion:evening",
+      "occasion:day",
+      "season:all-season",
+      "style:mini"
+    ]
+  },
+  {
+    "title": "Le Bambino Noir Verni",
+    "description": "The Bambino bag in patent black leather. A romantic mini bag with a curved top handle and gold hardware, perfect for evenings.",
+    "price": 650,
+    "currency": "EUR",
+    "category": "bag",
+    "images": [
+      "https://cdn.shopify.com/s/files/1/0266/6812/files/bambino-noir-verni-1.jpg",
+      "https://cdn.shopify.com/s/files/1/0266/6812/files/bambino-noir-verni-2.jpg"
+    ],
+    "sizes": [],
+    "tags": [
+      "category:bag",
+      "mood:chic",
+      "mood:romantic",
+      "occasion:wedding",
+      "occasion:day",
+      "season:spring",
+      "season:summer"
+    ]
+  },
+  {
+    "title": "Le Bambino Large",
+    "description": "The Bambino Large in smooth leather. A generous version of the iconic Bambino with a curved top handle and detachable shoulder strap.",
+    "price": 720,
+    "currency": "EUR",
+    "category": "bag",
+    "images": [
+      "https://cdn.shopify.com/s/files/1/0266/6812/files/bambino-large-1.jpg",
+      "https://cdn.shopify.com/s/files/1/0266/6812/files/bambino-large-2.jpg"
+    ],
+    "sizes": [],
+    "tags": [
+      "category:bag",
+      "mood:chic",
+      "mood:romantic",
+      "occasion:wedding",
+      "occasion:day",
+      "season:spring",
+      "season:summer"
+    ]
+  },
+  {
+    "title": "Le Citron",
+    "description": "The playful lemon-shaped bag from the Saint-Tropez 2024 collection. A limited-edition sculptural mini bag in yellow leather.",
+    "price": 490,
+    "currency": "EUR",
+    "category": "bag",
+    "images": [
+      "https://cdn.shopify.com/s/files/1/0266/6812/files/citron-1.jpg",
+      "https://cdn.shopify.com/s/files/1/0266/6812/files/citron-2.jpg"
+    ],
+    "sizes": [],
+    "tags": [
+      "category:bag",
+      "mood:playful",
+      "mood:summery",
+      "occasion:beach",
+      "occasion:vacation",
+      "season:summer",
+      "collection:saint-tropez-2024",
+      "collection:limited-edition"
+    ]
+  },
+  {
+    "title": "Le Banane",
+    "description": "The banana-shaped bag from the Saint-Tropez 2024 collection. A whimsical limited-edition piece in yellow leather with a long chain strap.",
+    "price": 490,
+    "currency": "EUR",
+    "category": "bag",
+    "images": [
+      "https://cdn.shopify.com/s/files/1/0266/6812/files/banane-1.jpg",
+      "https://cdn.shopify.com/s/files/1/0266/6812/files/banane-2.jpg"
+    ],
+    "sizes": [],
+    "tags": [
+      "category:bag",
+      "mood:playful",
+      "mood:summery",
+      "occasion:beach",
+      "occasion:vacation",
+      "season:summer",
+      "collection:saint-tropez-2024",
+      "collection:limited-edition"
+    ]
+  },
+  {
+    "title": "Le Tomate",
+    "description": "The tomato-shaped bag from the Saint-Tropez 2024 collection. A bold sculptural mini bag in red leather, a statement piece for summer.",
+    "price": 490,
+    "currency": "EUR",
+    "category": "bag",
+    "images": [
+      "https://cdn.shopify.com/s/files/1/0266/6812/files/tomate-1.jpg",
+      "https://cdn.shopify.com/s/files/1/0266/6812/files/tomate-2.jpg"
+    ],
+    "sizes": [],
+    "tags": [
+      "category:bag",
+      "mood:playful",
+      "mood:bold",
+      "occasion:cocktail",
+      "occasion:vacation",
+      "season:summer",
+      "collection:saint-tropez-2024",
+      "collection:limited-edition"
+    ]
+  },
+  {
+    "title": "Le Cabas Noir",
+    "description": "The minimalist everyday tote in black leather. Generous proportions for daily essentials with a clean, structured silhouette.",
+    "price": 850,
+    "currency": "EUR",
+    "category": "bag",
+    "images": [
+      "https://cdn.shopify.com/s/files/1/0266/6812/files/cabas-noir-1.jpg",
+      "https://cdn.shopify.com/s/files/1/0266/6812/files/cabas-noir-2.jpg"
+    ],
+    "sizes": [],
+    "tags": [
+      "category:bag",
+      "mood:minimalist",
+      "occasion:everyday",
+      "season:all-season"
+    ]
+  },
+  {
+    "title": "La Bomba",
+    "description": "A romantic and airy midi dress in flowy linen. Loose silhouette with a draped neckline and flutter sleeves, perfect for garden parties.",
+    "price": 690,
+    "currency": "EUR",
+    "category": "dress",
+    "images": [
+      "https://cdn.shopify.com/s/files/1/0266/6812/files/bomba-1.jpg",
+      "https://cdn.shopify.com/s/files/1/0266/6812/files/bomba-2.jpg"
+    ],
+    "sizes": [
+      "34",
+      "36",
+      "38",
+      "40",
+      "42"
+    ],
+    "tags": [
+      "category:dress",
+      "mood:romantic",
+      "mood:summery",
+      "occasion:wedding",
+      "occasion:garden_party",
+      "season:summer",
+      "material:linen",
+      "fit:loose"
+    ]
+  },
+  {
+    "title": "Le Souffle",
+    "description": "A sensual and romantic dress in cotton voile. A lightweight puff-sleeve silhouette with an open back for a dreamy summer look.",
+    "price": 750,
+    "currency": "EUR",
+    "category": "dress",
+    "images": [
+      "https://cdn.shopify.com/s/files/1/0266/6812/files/souffle-1.jpg",
+      "https://cdn.shopify.com/s/files/1/0266/6812/files/souffle-2.jpg"
+    ],
+    "sizes": [
+      "34",
+      "36",
+      "38",
+      "40",
+      "42"
+    ],
+    "tags": [
+      "category:dress",
+      "mood:sensual",
+      "mood:romantic",
+      "occasion:wedding",
+      "occasion:cocktail",
+      "season:summer",
+      "material:cotton"
+    ]
+  },
+  {
+    "title": "La Riviera",
+    "description": "An elegant slip dress in silk satin. A sophisticated column silhouette with spaghetti straps and a subtle side slit.",
+    "price": 890,
+    "currency": "EUR",
+    "category": "dress",
+    "images": [
+      "https://cdn.shopify.com/s/files/1/0266/6812/files/riviera-1.jpg",
+      "https://cdn.shopify.com/s/files/1/0266/6812/files/riviera-2.jpg"
+    ],
+    "sizes": [
+      "34",
+      "36",
+      "38",
+      "40",
+      "42"
+    ],
+    "tags": [
+      "category:dress",
+      "mood:sophisticated",
+      "mood:elegant",
+      "occasion:wedding",
+      "occasion:cocktail",
+      "season:summer",
+      "material:silk"
+    ]
+  },
+  {
+    "title": "Les Pralu",
+    "description": "The iconic platform mules with a wooden sole and leather upper. A statement shoe with a playful platform heel and open-toe design.",
+    "price": 690,
+    "currency": "EUR",
+    "category": "shoes",
+    "images": [
+      "https://cdn.shopify.com/s/files/1/0266/6812/files/pralu-1.jpg",
+      "https://cdn.shopify.com/s/files/1/0266/6812/files/pralu-2.jpg"
+    ],
+    "sizes": [
+      "35",
+      "36",
+      "37",
+      "38",
+      "39",
+      "40",
+      "41"
+    ],
+    "tags": [
+      "category:shoes",
+      "mood:playful",
+      "mood:summery",
+      "occasion:wedding",
+      "occasion:vacation",
+      "season:summer",
+      "style:platform"
+    ]
+  },
+  {
+    "title": "Les Classiques",
+    "description": "The minimalist leather mule with a clean square toe and block heel. A versatile everyday shoe with a chic understated aesthetic.",
+    "price": 590,
+    "currency": "EUR",
+    "category": "shoes",
+    "images": [
+      "https://cdn.shopify.com/s/files/1/0266/6812/files/classiques-1.jpg",
+      "https://cdn.shopify.com/s/files/1/0266/6812/files/classiques-2.jpg"
+    ],
+    "sizes": [
+      "35",
+      "36",
+      "37",
+      "38",
+      "39",
+      "40",
+      "41"
+    ],
+    "tags": [
+      "category:shoes",
+      "mood:minimalist",
+      "mood:chic",
+      "occasion:wedding",
+      "occasion:everyday",
+      "season:all-season",
+      "style:mule"
+    ]
+  }
+]
