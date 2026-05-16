@@ -241,6 +241,7 @@ button.reset:hover:not(:has(> *)) {
   transition: background 0.3s ease, border-color 0.3s ease;
 }
 
+/* Applied by Header.tsx via useLocation+scroll (Task 2) */
 .header--transparent {
   background: transparent;
   border-color: transparent;
@@ -300,7 +301,7 @@ button.reset:hover:not(:has(> *)) {
 * Global layout
 * --------------------------------------------------
 */
-main {
+body > main {
   padding-top: var(--header-height);
   padding-bottom: 52px;
 }
@@ -580,7 +581,7 @@ main {
   padding: 72px 40px 0;
 }
 
-.products-section:last-of-type {
+.products-section:last-child {
   padding-bottom: 72px;
 }
 
