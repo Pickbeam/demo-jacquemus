@@ -8,23 +8,16 @@ interface FooterProps {
   publicStoreDomain: string;
 }
 
-export function Footer({
-  footer: footerPromise,
-  header,
-  publicStoreDomain,
-}: FooterProps) {
+export function Footer({footer: footerPromise, header, publicStoreDomain}: FooterProps) {
   return (
     <Suspense>
       <Await resolve={footerPromise}>
-        {(footer) => (
-          <footer className="footer">
-            {footer?.menu && header.shop.primaryDomain?.url && (
-              <FooterMenu
-                menu={footer.menu}
-                primaryDomainUrl={header.shop.primaryDomain.url}
-                publicStoreDomain={publicStoreDomain}
-              />
-            )}
+        {() => (
+          <footer>
+            <FooterServices />
+            <FooterMid />
+            <FooterNav />
+            <FooterBottom />
           </footer>
         )}
       </Await>
@@ -32,98 +25,92 @@ export function Footer({
   );
 }
 
-function FooterMenu({
-  menu,
-  primaryDomainUrl,
-  publicStoreDomain,
-}: {
-  menu: FooterQuery['menu'];
-  primaryDomainUrl: FooterProps['header']['shop']['primaryDomain']['url'];
-  publicStoreDomain: string;
-}) {
+function FooterServices() {
   return (
-    <nav className="footer-menu" role="navigation">
-      {(menu || FALLBACK_FOOTER_MENU).items.map((item) => {
-        if (!item.url) return null;
-        // if the url is internal, we strip the domain
-        const url =
-          item.url.includes('myshopify.com') ||
-          item.url.includes(publicStoreDomain) ||
-          item.url.includes(primaryDomainUrl)
-            ? new URL(item.url).pathname
-            : item.url;
-        const isExternal = !url.startsWith('/');
-        return isExternal ? (
-          <a href={url} key={item.id} rel="noopener noreferrer" target="_blank">
-            {item.title}
-          </a>
-        ) : (
-          <NavLink
-            end
-            key={item.id}
-            prefetch="intent"
-            style={activeLinkStyle}
-            to={url}
-          >
-            {item.title}
-          </NavLink>
-        );
-      })}
-    </nav>
+    <div className="footer-services">
+      <div className="footer-service">
+        <p className="footer-service-title">Prendre un rendez-vous en boutique</p>
+        <p className="footer-service-desc">Paris, Londres, New York, Los Angeles...</p>
+      </div>
+      <div className="footer-service">
+        <p className="footer-service-title">Livraison et retours gratuits</p>
+        <p className="footer-service-desc">
+          Livraison offerte<br />et retours simplifiés sous 14 jours.
+        </p>
+      </div>
+      <div className="footer-service">
+        <p className="footer-service-title">Paiement sécurisé</p>
+        <p className="footer-service-desc">
+          Visa, Mastercard, Paypal, Apple pay,<br />American express, Klarna
+        </p>
+      </div>
+    </div>
   );
 }
 
-const FALLBACK_FOOTER_MENU = {
-  id: 'gid://shopify/Menu/199655620664',
-  items: [
-    {
-      id: 'gid://shopify/MenuItem/461633060920',
-      resourceId: 'gid://shopify/ShopPolicy/23358046264',
-      tags: [],
-      title: 'Privacy Policy',
-      type: 'SHOP_POLICY',
-      url: '/policies/privacy-policy',
-      items: [],
-    },
-    {
-      id: 'gid://shopify/MenuItem/461633093688',
-      resourceId: 'gid://shopify/ShopPolicy/23358013496',
-      tags: [],
-      title: 'Refund Policy',
-      type: 'SHOP_POLICY',
-      url: '/policies/refund-policy',
-      items: [],
-    },
-    {
-      id: 'gid://shopify/MenuItem/461633126456',
-      resourceId: 'gid://shopify/ShopPolicy/23358111800',
-      tags: [],
-      title: 'Shipping Policy',
-      type: 'SHOP_POLICY',
-      url: '/policies/shipping-policy',
-      items: [],
-    },
-    {
-      id: 'gid://shopify/MenuItem/461633159224',
-      resourceId: 'gid://shopify/ShopPolicy/23358079032',
-      tags: [],
-      title: 'Terms of Service',
-      type: 'SHOP_POLICY',
-      url: '/policies/terms-of-service',
-      items: [],
-    },
-  ],
-};
+function FooterMid() {
+  return (
+    <div className="footer-mid">
+      <div className="footer-newsletter">
+        <div className="footer-newsletter-toggle">
+          <span className="footer-newsletter-title">S&apos;abonner à la newsletter</span>
+          <span>∨</span>
+        </div>
+        <p className="footer-newsletter-desc">
+          Inscrivez-vous pour recevoir par e-mail toutes les informations sur nos
+          dernières collections, nos produits, nos défilés de mode et nos projets.
+        </p>
+        <button className="footer-newsletter-btn" type="button">
+          S&apos;enregistrer
+        </button>
+      </div>
+      <div className="footer-contact">
+        <p className="footer-contact-title">Besoin d&apos;aide ? Contactez-nous</p>
+        <p className="footer-contact-hours">
+          Du Lundi au Vendredi de 10:00 à 13:00 et de 14:00 à 21:00,<br />
+          les samedis de 10:00 à 13:00 et de 14:00 à 18:00 CET.
+        </p>
+        <div className="footer-contact-links">
+          <a href="/pages/contact">Formulaire de contact</a>
+          <a href="/pages/order-tracking">Suivre une commande</a>
+          <a href="/pages/returns">Enregistrer un retour</a>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-function activeLinkStyle({
-  isActive,
-  isPending,
-}: {
-  isActive: boolean;
-  isPending: boolean;
-}) {
-  return {
-    fontWeight: isActive ? 'bold' : undefined,
-    color: isPending ? 'grey' : 'white',
-  };
+function FooterNav() {
+  return (
+    <div className="footer-nav">
+      <div className="footer-nav-group-title">Mentions légales et cookies <span>∨</span></div>
+      <div className="footer-nav-group-title">FAQ <span>∨</span></div>
+      <div className="footer-nav-group-title">Entreprise <span>∨</span></div>
+      <div>
+        <p className="footer-social-title">Suivez nous</p>
+        <div className="footer-social-links">
+          <a href="https://www.instagram.com/jacquemus" target="_blank" rel="noopener noreferrer">Instagram</a>
+          <a href="https://www.facebook.com/jacquemus" target="_blank" rel="noopener noreferrer">Facebook</a>
+          <a href="https://www.tiktok.com/@jacquemus" target="_blank" rel="noopener noreferrer">Tiktok</a>
+          <a href="https://x.com/jacquemus" target="_blank" rel="noopener noreferrer">X</a>
+          <a href="https://www.pinterest.fr/jacquemus" target="_blank" rel="noopener noreferrer">Pinterest</a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FooterBottom() {
+  return (
+    <div className="footer-bottom">
+      <span className="footer-bottom-copy">© JACQUEMUS {new Date().getFullYear()}</span>
+      <NavLink to="/" className="footer-bottom-logo" prefetch="intent">
+        Jacquemus
+      </NavLink>
+      <div className="footer-bottom-right">
+        <a href="#">Pays : France Métropolitaine (EUR)</a>
+        <a href="#">Langage : français ∨</a>
+      </div>
+    </div>
+  );
 }
