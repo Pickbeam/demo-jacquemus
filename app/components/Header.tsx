@@ -25,7 +25,7 @@ export function Header({
 }: HeaderProps) {
   const {shop, menu} = header;
   const location = useLocation();
-  const isHome = location.pathname === '/' || /^\/[a-z]{2}(-[A-Z]{2})?$/.test(location.pathname);
+  const isHome = location.pathname === '/' || /^\/[a-z]{2}(-[a-z]{2})?\/?\s*$/i.test(location.pathname);
   const [scrolled, setScrolled] = useState(!isHome);
 
   useEffect(() => {
@@ -58,6 +58,7 @@ export function Header({
         viewport="desktop"
         primaryDomainUrl={header.shop.primaryDomain.url}
         publicStoreDomain={publicStoreDomain}
+        scrolled={scrolled}
       />
       <HeaderCtas isLoggedIn={isLoggedIn} cart={cart} scrolled={scrolled} />
     </header>
@@ -69,11 +70,13 @@ export function HeaderMenu({
   primaryDomainUrl,
   viewport,
   publicStoreDomain,
+  scrolled,
 }: {
   menu: HeaderProps['header']['menu'];
   primaryDomainUrl: HeaderProps['header']['shop']['primaryDomain']['url'];
   viewport: Viewport;
   publicStoreDomain: HeaderProps['publicStoreDomain'];
+  scrolled?: boolean;
 }) {
   const className = `header-menu-${viewport}`;
   const {close} = useAside();
@@ -115,7 +118,13 @@ export function HeaderMenu({
             to={url}
             style={({isActive, isPending}) => ({
               fontWeight: isActive ? '600' : undefined,
-              color: isPending ? '#999' : isShopper ? '#c8a96e' : '#444',
+              color: isPending
+                ? '#999'
+                : isShopper
+                ? '#c8a96e'
+                : viewport === 'desktop' && !scrolled
+                ? 'rgba(255,255,255,0.75)'
+                : '#444',
             })}
           >
             {isShopper ? `${item.title} ✦` : item.title}
