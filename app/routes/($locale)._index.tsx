@@ -1,13 +1,49 @@
 import {Await, useLoaderData, Link} from 'react-router';
 import type {Route} from './+types/_index';
 import {Suspense} from 'react';
-import {Image} from '@shopify/hydrogen';
-import type {
-  FeaturedCollectionFragment,
-  RecommendedProductsQuery,
-} from 'storefrontapi.generated';
-import {ProductItem} from '~/components/ProductItem';
+import {Image, Money} from '@shopify/hydrogen';
+import type {CurrencyCode} from '@shopify/hydrogen/storefront-api-types';
+import {AddToCartButton} from '~/components/AddToCartButton';
 import {MockShopNotice} from '~/components/MockShopNotice';
+
+type GridProduct = {
+  id: string;
+  title: string;
+  handle: string;
+  featuredImage: {
+    id: string;
+    url: string;
+    altText: string | null;
+    width: number;
+    height: number;
+  } | null;
+  priceRange: {minVariantPrice: {amount: string; currencyCode: CurrencyCode}};
+};
+
+type HeroProduct = GridProduct & {
+  variants: {nodes: Array<{id: string; availableForSale: boolean}>};
+};
+
+type HeroCollection = {
+  id: string;
+  title: string;
+  handle: string;
+  image: {
+    id: string;
+    url: string;
+    altText: string | null;
+    width: number;
+    height: number;
+  } | null;
+  products: {nodes: Array<HeroProduct>};
+};
+
+type HomepageProductsData = {
+  nouveautes: {nodes: Array<GridProduct>};
+  sacs: {products: {nodes: Array<GridProduct>}} | null;
+  pretAPorter: {products: {nodes: Array<GridProduct>}} | null;
+  accessoires: {products: {nodes: Array<GridProduct>}} | null;
+};
 
 export const meta: Route.MetaFunction = () => {
   return [{title: 'Hydrogen | Home'}];
@@ -23,39 +59,25 @@ export async function loader(args: Route.LoaderArgs) {
   return {...deferredData, ...criticalData};
 }
 
-/**
- * Load data necessary for rendering content above the fold. This is the critical data
- * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
- */
 async function loadCriticalData({context}: Route.LoaderArgs) {
   const [{collections}] = await Promise.all([
-    context.storefront.query(FEATURED_COLLECTION_QUERY),
-    // Add other queries here, so that they are loaded in parallel
+    context.storefront.query(HERO_QUERY),
   ]);
-
   return {
     isShopLinked: Boolean(context.env.PUBLIC_STORE_DOMAIN),
-    featuredCollection: collections.nodes[0],
+    heroCollection: (collections.nodes[0] ?? null) as HeroCollection | null,
   };
 }
 
-/**
- * Load data for rendering content below the fold. This data is deferred and will be
- * fetched after the initial page load. If it's unavailable, the page should still 200.
- * Make sure to not throw any errors here, as it will cause the page to 500.
- */
 function loadDeferredData({context}: Route.LoaderArgs) {
-  const recommendedProducts = context.storefront
-    .query(RECOMMENDED_PRODUCTS_QUERY)
+  const productsData = context.storefront
+    .query(HOMEPAGE_PRODUCTS_QUERY)
     .catch((error: Error) => {
-      // Log query errors, but don't throw them so the page can still render
       console.error(error);
       return null;
-    });
+    }) as Promise<HomepageProductsData | null>;
 
-  return {
-    recommendedProducts,
-  };
+  return {productsData};
 }
 
 export default function Homepage() {
@@ -63,115 +85,221 @@ export default function Homepage() {
   return (
     <div className="home">
       {data.isShopLinked ? null : <MockShopNotice />}
-      <FeaturedCollection collection={data.featuredCollection} />
-      <RecommendedProducts products={data.recommendedProducts} />
+      <HeroSection collection={data.heroCollection} />
+      <Suspense fallback={<div style={{height: '400px'}} />}>
+        <Await resolve={data.productsData}>
+          {(products) => <ProductSections products={products} />}
+        </Await>
+      </Suspense>
     </div>
   );
 }
 
-function FeaturedCollection({
-  collection,
-}: {
-  collection: FeaturedCollectionFragment;
-}) {
+function HeroSection({collection}: {collection: HeroCollection | null}) {
   if (!collection) return null;
-  const image = collection?.image;
+  const heroProduct = collection.products.nodes[0] ?? null;
+
   return (
-    <Link
-      className="featured-collection"
-      to={`/collections/${collection.handle}`}
-    >
-      {image && (
-        <div className="featured-collection-image">
+    <section className="hero">
+      {/* Colonne gauche : image de campagne */}
+      <Link className="hero-left" to={`/collections/${collection.handle}`}>
+        {collection.image ? (
           <Image
-            data={image}
-            sizes="100vw"
-            alt={image.altText || collection.title}
+            data={collection.image}
+            sizes="50vw"
+            alt={collection.image.altText ?? collection.title}
           />
+        ) : (
+          <div style={{width: '100%', height: '100%', background: '#1a1a1a'}} />
+        )}
+        <span className="hero-left-label">SS 26 — {collection.title}</span>
+        <div className="hero-left-content">
+          <h1 className="hero-left-title">
+            La Maison<br />Jacquemus
+          </h1>
+          <span className="hero-left-cta">Découvrir la collection</span>
+        </div>
+      </Link>
+
+      {/* Colonne droite : produit star */}
+      {heroProduct && (
+        <div className="hero-right">
+          {heroProduct.featuredImage ? (
+            <Image
+              data={heroProduct.featuredImage}
+              sizes="50vw"
+              alt={heroProduct.featuredImage.altText ?? heroProduct.title}
+            />
+          ) : (
+            <div style={{width: '100%', height: '100%', background: '#f0ede8'}} />
+          )}
+          <div className="hero-right-content">
+            <div>
+              <p className="hero-right-name">{heroProduct.title}</p>
+              <p className="hero-right-price">
+                <Money data={heroProduct.priceRange.minVariantPrice} />
+              </p>
+            </div>
+            {heroProduct.variants.nodes[0] && (
+              <AddToCartButton
+                lines={[
+                  {
+                    merchandiseId: heroProduct.variants.nodes[0].id,
+                    quantity: 1,
+                  },
+                ]}
+                disabled={!heroProduct.variants.nodes[0].availableForSale}
+              >
+                <span className="hero-right-add">Add to cart</span>
+              </AddToCartButton>
+            )}
+          </div>
         </div>
       )}
-      <h1>{collection.title}</h1>
-    </Link>
-  );
-}
-
-function RecommendedProducts({
-  products,
-}: {
-  products: Promise<RecommendedProductsQuery | null>;
-}) {
-  return (
-    <section
-      className="recommended-products"
-      aria-labelledby="recommended-products"
-    >
-      <h2 id="recommended-products">Recommended Products</h2>
-      <Suspense fallback={<div>Loading...</div>}>
-        <Await resolve={products}>
-          {(response) => (
-            <div className="recommended-products-grid">
-              {response
-                ? response.products.nodes.map((product) => (
-                    <ProductItem key={product.id} product={product} />
-                  ))
-                : null}
-            </div>
-          )}
-        </Await>
-      </Suspense>
-      <br />
     </section>
   );
 }
 
-const FEATURED_COLLECTION_QUERY = `#graphql
-  fragment FeaturedCollection on Collection {
+function ProductCard({product, cols}: {product: GridProduct; cols: 2 | 4}) {
+  return (
+    <Link
+      className="product-card"
+      to={`/products/${product.handle}`}
+      prefetch="intent"
+    >
+      <div className="product-card-image-wrap">
+        {product.featuredImage ? (
+          <Image
+            data={product.featuredImage}
+            sizes={cols === 4 ? '25vw' : '50vw'}
+            alt={product.featuredImage.altText ?? product.title}
+          />
+        ) : (
+          <div className="product-card-placeholder" />
+        )}
+      </div>
+      <div className="product-card-body">
+        <p className="product-card-name">{product.title}</p>
+        <p className="product-card-price">
+          <Money data={product.priceRange.minVariantPrice} />
+        </p>
+      </div>
+    </Link>
+  );
+}
+
+function ProductGridSection({
+  label,
+  products,
+  cols,
+  collectionHandle,
+}: {
+  label: string;
+  products: Array<GridProduct>;
+  cols: 2 | 4;
+  collectionHandle?: string;
+}) {
+  if (!products.length) return null;
+
+  return (
+    <section className="products-section">
+      <div className="products-section-header">
+        <span className="products-section-label">{label}</span>
+        {collectionHandle && (
+          <Link
+            className="products-section-link"
+            to={`/collections/${collectionHandle}`}
+          >
+            Voir tout
+          </Link>
+        )}
+      </div>
+      <div className={cols === 4 ? 'grid-4' : 'grid-2'}>
+        {products.map((product) => (
+          <ProductCard key={product.id} product={product} cols={cols} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function ProductSections({products}: {products: HomepageProductsData | null}) {
+  if (!products) return null;
+
+  return (
+    <>
+      <ProductGridSection
+        label="Nouveautés"
+        products={products.nouveautes.nodes}
+        cols={4}
+      />
+      <ProductGridSection
+        label="Sacs iconiques"
+        products={products.sacs?.products.nodes ?? []}
+        cols={2}
+        collectionHandle="sacs"
+      />
+      <ProductGridSection
+        label="Prêt-à-porter"
+        products={products.pretAPorter?.products.nodes ?? []}
+        cols={4}
+        collectionHandle="pret-a-porter"
+      />
+      <ProductGridSection
+        label="Accessoires"
+        products={products.accessoires?.products.nodes ?? []}
+        cols={2}
+        collectionHandle="accessoires"
+      />
+    </>
+  );
+}
+
+const HERO_QUERY = `#graphql
+  fragment HeroProduct on Product {
     id
     title
-    image {
-      id
-      url
-      altText
-      width
-      height
-    }
     handle
+    featuredImage { id url altText width height }
+    priceRange { minVariantPrice { amount currencyCode } }
+    variants(first: 1) { nodes { id availableForSale } }
   }
-  query FeaturedCollection($country: CountryCode, $language: LanguageCode)
+  fragment HeroCollection on Collection {
+    id
+    title
+    handle
+    image { id url altText width height }
+    products(first: 1) { nodes { ...HeroProduct } }
+  }
+  query HeroQuery($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
     collections(first: 1, sortKey: UPDATED_AT, reverse: true) {
-      nodes {
-        ...FeaturedCollection
-      }
+      nodes { ...HeroCollection }
     }
   }
 ` as const;
 
-const RECOMMENDED_PRODUCTS_QUERY = `#graphql
-  fragment RecommendedProduct on Product {
+const HOMEPAGE_PRODUCTS_QUERY = `#graphql
+  fragment GridProduct on Product {
     id
     title
     handle
-    priceRange {
-      minVariantPrice {
-        amount
-        currencyCode
-      }
-    }
-    featuredImage {
-      id
-      url
-      altText
-      width
-      height
-    }
+    featuredImage { id url altText width height }
+    priceRange { minVariantPrice { amount currencyCode } }
   }
-  query RecommendedProducts ($country: CountryCode, $language: LanguageCode)
+  query HomepageProducts($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
-    products(first: 4, sortKey: UPDATED_AT, reverse: true) {
-      nodes {
-        ...RecommendedProduct
-      }
+    nouveautes: products(first: 4, sortKey: UPDATED_AT, reverse: true) {
+      nodes { ...GridProduct }
+    }
+    sacs: collection(handle: "sacs") {
+      products(first: 2) { nodes { ...GridProduct } }
+    }
+    pretAPorter: collection(handle: "pret-a-porter") {
+      products(first: 4) { nodes { ...GridProduct } }
+    }
+    accessoires: collection(handle: "accessoires") {
+      products(first: 2) { nodes { ...GridProduct } }
     }
   }
 ` as const;
