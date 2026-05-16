@@ -45,6 +45,8 @@ type HomepageProductsData = {
   accessoires: {products: {nodes: Array<GridProduct>}} | null;
 };
 
+const CURRENT_SEASON = 'SS 26';
+
 export const meta: Route.MetaFunction = () => {
   return [{title: 'Hydrogen | Home'}];
 };
@@ -102,7 +104,7 @@ function HeroSection({collection}: {collection: HeroCollection | null}) {
   return (
     <section className="hero">
       {/* Colonne gauche : image de campagne */}
-      <Link className="hero-left" to={`/collections/${collection.handle}`}>
+      <Link className="hero-left" to={`/collections/${collection.handle}`} prefetch="intent">
         {collection.image ? (
           <Image
             data={collection.image}
@@ -112,7 +114,7 @@ function HeroSection({collection}: {collection: HeroCollection | null}) {
         ) : (
           <div style={{width: '100%', height: '100%', background: '#1a1a1a'}} />
         )}
-        <span className="hero-left-label">SS 26 — {collection.title}</span>
+        <span className="hero-left-label">{CURRENT_SEASON} — {collection.title}</span>
         <div className="hero-left-content">
           <h1 className="hero-left-title">
             La Maison<br />Jacquemus
@@ -124,15 +126,17 @@ function HeroSection({collection}: {collection: HeroCollection | null}) {
       {/* Colonne droite : produit star */}
       {heroProduct && (
         <div className="hero-right">
-          {heroProduct.featuredImage ? (
-            <Image
-              data={heroProduct.featuredImage}
-              sizes="50vw"
-              alt={heroProduct.featuredImage.altText ?? heroProduct.title}
-            />
-          ) : (
-            <div style={{width: '100%', height: '100%', background: '#f0ede8'}} />
-          )}
+          <Link to={`/products/${heroProduct.handle}`} prefetch="intent" style={{display: 'block', height: '100%'}}>
+            {heroProduct.featuredImage ? (
+              <Image
+                data={heroProduct.featuredImage}
+                sizes="50vw"
+                alt={heroProduct.featuredImage.altText ?? heroProduct.title}
+              />
+            ) : (
+              <div style={{width: '100%', height: '100%', background: '#f0ede8'}} />
+            )}
+          </Link>
           <div className="hero-right-content">
             <div>
               <p className="hero-right-name">{heroProduct.title}</p>
