@@ -108,8 +108,8 @@ function FooterBottom() {
         Jacquemus
       </NavLink>
       <div className="footer-bottom-right">
-        <a href="#">Pays : France Métropolitaine (EUR)</a>
-        <a href="#">Langage : français ∨</a>
+        <button type="button">Pays : France Métropolitaine (EUR)</button>
+        <button type="button">Langage : français ∨</button>
       </div>
     </div>
   );
