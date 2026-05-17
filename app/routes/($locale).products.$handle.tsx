@@ -116,22 +116,24 @@ export default function Product() {
 
       {/* Panneau sticky */}
       <div className="product-main">
-        <p className="product-vendor">{vendor}</p>
-        <h1>{title}</h1>
-        <ProductPrice
-          price={selectedVariant?.price}
-          compareAtPrice={selectedVariant?.compareAtPrice}
-        />
-        <div className="product-sep" />
-        <ProductForm
-          productOptions={productOptions}
-          selectedVariant={selectedVariant}
-        />
-        <LookComposer
-          productTitle={title}
-          tags={tags ?? []}
-          productType={productType ?? ''}
-        />
+        <div className="product-main-inner">
+          <p className="product-vendor">{vendor}</p>
+          <h1>{title}</h1>
+          <ProductPrice
+            price={selectedVariant?.price}
+            compareAtPrice={selectedVariant?.compareAtPrice}
+          />
+          <div className="product-sep" />
+          <ProductForm
+            productOptions={productOptions}
+            selectedVariant={selectedVariant}
+          />
+          <LookComposer
+            productTitle={title}
+            tags={tags ?? []}
+            productType={productType ?? ''}
+          />
+        </div>
       </div>
 
       {/* Description pleine largeur */}
