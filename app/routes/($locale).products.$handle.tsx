@@ -9,7 +9,6 @@ import {
   useSelectedOptionInUrlParam,
 } from '@shopify/hydrogen';
 import {ProductPrice} from '~/components/ProductPrice';
-import {ProductImage} from '~/components/ProductImage';
 import {ProductForm} from '~/components/ProductForm';
 import {LookComposer} from '~/components/LookComposer';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
@@ -96,18 +95,34 @@ export default function Product() {
     selectedOrFirstAvailableVariant: selectedVariant,
   });
 
-  const {title, descriptionHtml, tags, productType} = product;
+  const {title, descriptionHtml, tags, productType, images, vendor} = product;
 
   return (
+    <>
     <div className="product">
-      <ProductImage image={selectedVariant?.image} />
+      {/* Galerie verticale */}
+      <div className="product-gallery">
+        {images.nodes.map((img: {url: string; altText: string | null; width: number | null; height: number | null}, i: number) => (
+          <img
+            key={img.url}
+            src={img.url}
+            alt={img.altText ?? title}
+            width={img.width ?? undefined}
+            height={img.height ?? undefined}
+            loading={i === 0 ? 'eager' : 'lazy'}
+          />
+        ))}
+      </div>
+
+      {/* Panneau sticky */}
       <div className="product-main">
+        <p className="product-vendor">{vendor}</p>
         <h1>{title}</h1>
         <ProductPrice
           price={selectedVariant?.price}
           compareAtPrice={selectedVariant?.compareAtPrice}
         />
-        <br />
+        <div className="product-sep" />
         <ProductForm
           productOptions={productOptions}
           selectedVariant={selectedVariant}
@@ -117,30 +132,34 @@ export default function Product() {
           tags={tags ?? []}
           productType={productType ?? ''}
         />
-        <br />
-        <p>
-          <strong>Description</strong>
-        </p>
-        <br />
-        <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
-        <br />
       </div>
-      <Analytics.ProductView
-        data={{
-          products: [
-            {
-              id: product.id,
-              title: product.title,
-              price: selectedVariant?.price.amount || '0',
-              vendor: product.vendor,
-              variantId: selectedVariant?.id || '',
-              variantTitle: selectedVariant?.title || '',
-              quantity: 1,
-            },
-          ],
-        }}
-      />
+
+      {/* Description pleine largeur */}
+      <div className="product-description">
+        <p className="product-description-label">Description</p>
+        <div
+          className="product-description-text"
+          dangerouslySetInnerHTML={{__html: descriptionHtml}}
+        />
+      </div>
+
     </div>
+    <Analytics.ProductView
+      data={{
+        products: [
+          {
+            id: product.id,
+            title: product.title,
+            price: selectedVariant?.price.amount || '0',
+            vendor: product.vendor,
+            variantId: selectedVariant?.id || '',
+            variantTitle: selectedVariant?.title || '',
+            quantity: 1,
+          },
+        ],
+      }}
+    />
+    </>
   );
 }
 
@@ -191,6 +210,14 @@ const PRODUCT_FRAGMENT = `#graphql
     description
     tags
     productType
+    images(first: 8) {
+      nodes {
+        url
+        altText
+        width
+        height
+      }
+    }
     encodedVariantExistence
     encodedVariantAvailability
     options {
