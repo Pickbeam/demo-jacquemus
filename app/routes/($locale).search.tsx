@@ -1,4 +1,5 @@
 import {useLoaderData} from 'react-router';
+import {Link} from 'react-router';
 import type {Route} from './+types/search';
 import {getPaginationVariables, Analytics} from '@shopify/hydrogen';
 import {SearchForm} from '~/components/SearchForm';
@@ -12,6 +13,7 @@ import type {
   RegularSearchQuery,
   PredictiveSearchQuery,
 } from 'storefrontapi.generated';
+import {useState, useCallback} from 'react';
 
 export const meta: Route.MetaFunction = () => {
   return [{title: `Hydrogen | Search`}];
@@ -33,46 +35,152 @@ export async function loader({request, context}: Route.LoaderArgs) {
   return await searchPromise;
 }
 
-/**
- * Renders the /search route
- */
+interface SemanticProduct {
+  id: string;
+  title: string;
+  handle: string;
+  price: number;
+  image: string;
+}
+
 export default function SearchPage() {
-  const {type, term, result, error} = useLoaderData<typeof loader>();
-  if (type === 'predictive') return null;
+  const [query, setQuery] = useState('');
+  const [state, setState] = useState<'idle' | 'loading' | 'loaded'>('idle');
+  const [interpretation, setInterpretation] = useState('');
+  const [products, setProducts] = useState<SemanticProduct[]>([]);
+
+  const search = useCallback(
+    async (q: string) => {
+      if (!q.trim() || state === 'loading') return;
+      setState('loading');
+      setInterpretation('');
+      setProducts([]);
+
+      try {
+        const res = await fetch('/api/semantic-search', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({query: q}),
+        });
+        if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`);
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let currentEvent = '';
+
+        while (true) {
+          const {done, value} = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, {stream: true});
+          const lines = buffer.split('\n');
+          buffer = lines.pop() ?? '';
+
+          for (const line of lines) {
+            if (line.startsWith('event: ')) {
+              currentEvent = line.slice(7).trim();
+            } else if (line.startsWith('data: ')) {
+              let data: Record<string, unknown>;
+              try {
+                data = JSON.parse(line.slice(6)) as Record<string, unknown>;
+              } catch {
+                continue;
+              }
+              if (currentEvent === 'interpretation') {
+                setInterpretation(String(data.text ?? ''));
+              } else if (currentEvent === 'products') {
+                setProducts((data.products as SemanticProduct[]) ?? []);
+                setState('loaded');
+              } else if (currentEvent === 'done') {
+                setState((s) => (s === 'loading' ? 'loaded' : s));
+              }
+            }
+          }
+        }
+      } catch {
+        setState('loaded');
+      }
+    },
+    [state],
+  );
+
+  const hints = [
+    'une robe pour un dîner au soleil',
+    'un sac à offrir',
+    'quelque chose de casual chic',
+  ];
 
   return (
-    <div className="search">
-      <h1>Search</h1>
-      <SearchForm>
-        {({inputRef}) => (
-          <>
-            <input
-              defaultValue={term}
-              name="q"
-              placeholder="Search…"
-              ref={inputRef}
-              type="search"
-            />
-            &nbsp;
-            <button type="submit">Search</button>
-          </>
-        )}
-      </SearchForm>
-      {error && <p style={{color: 'red'}}>{error}</p>}
-      {!term || !result?.total ? (
-        <SearchResults.Empty />
-      ) : (
-        <SearchResults result={result} term={term}>
-          {({articles, pages, products, term}) => (
-            <div>
-              <SearchResults.Products products={products} term={term} />
-              <SearchResults.Pages pages={pages} term={term} />
-              <SearchResults.Articles articles={articles} term={term} />
-            </div>
-          )}
-        </SearchResults>
+    <div className="search-ai">
+      <div className="search-ai-hero">
+        <p className="search-ai-label">Recherche</p>
+        <div className="search-ai-input-row">
+          <input
+            className="search-ai-input"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') search(query);
+            }}
+            placeholder="Décrivez ce que vous recherchez…"
+            autoFocus
+          />
+          <button
+            className="search-ai-btn"
+            onClick={() => search(query)}
+            disabled={!query.trim() || state === 'loading'}
+          >
+            {state === 'loading' ? '···' : '→'}
+          </button>
+        </div>
+        <div className="search-ai-hints">
+          {hints.map((hint) => (
+            <button
+              key={hint}
+              className="search-ai-hint"
+              onClick={() => {
+                setQuery(hint);
+                search(hint);
+              }}
+            >
+              « {hint} »
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {interpretation && (
+        <p className="search-ai-interpretation">{interpretation}</p>
       )}
-      <Analytics.SearchView data={{searchTerm: term, searchResults: result}} />
+
+      {products.length > 0 && (
+        <div className="search-ai-grid">
+          {products.map((p) => (
+            <Link
+              key={p.id}
+              to={`/products/${p.handle}`}
+              className="search-ai-card"
+              prefetch="intent"
+            >
+              <div className="search-ai-card-img">
+                {p.image && <img src={p.image} alt={p.title} loading="lazy" />}
+              </div>
+              <p className="search-ai-card-title">
+                {p.title.replace('Jacquemus ', '')}
+              </p>
+              {p.price > 0 && (
+                <p className="search-ai-card-price">
+                  {p.price.toLocaleString('fr-FR')} €
+                </p>
+              )}
+            </Link>
+          ))}
+        </div>
+      )}
+
+      {state === 'loaded' && products.length === 0 && (
+        <p className="search-ai-empty">Aucun résultat pour cette recherche.</p>
+      )}
     </div>
   );
 }
