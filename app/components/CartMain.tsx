@@ -4,6 +4,7 @@ import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
 import {CartLineItem, type CartLine} from '~/components/CartLineItem';
 import {CartSummary} from './CartSummary';
+import {CartSuggestion} from '~/components/CartSuggestion';
 
 export type CartLayout = 'page' | 'aside';
 
@@ -80,6 +81,13 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
             })}
           </ul>
         </div>
+        {cartHasItems && layout === 'aside' && (
+          <CartSuggestion
+            cartTitles={(cart?.lines?.nodes ?? []).map(
+              (line) => line.merchandise.product.title,
+            )}
+          />
+        )}
         {cartHasItems && <CartSummary cart={cart} layout={layout} />}
       </div>
     </section>
