@@ -1,9 +1,6 @@
-import {useLoaderData} from 'react-router';
 import {Link} from 'react-router';
 import type {Route} from './+types/search';
-import {getPaginationVariables, Analytics} from '@shopify/hydrogen';
-import {SearchForm} from '~/components/SearchForm';
-import {SearchResults} from '~/components/SearchResults';
+import {getPaginationVariables} from '@shopify/hydrogen';
 import {
   type RegularSearchReturn,
   type PredictiveSearchReturn,
@@ -123,10 +120,12 @@ export default function SearchPage() {
               if (e.key === 'Enter') search(query);
             }}
             placeholder="Décrivez ce que vous recherchez…"
+            aria-label="Recherche sémantique"
             autoFocus
           />
           <button
             className="search-ai-btn"
+            aria-label="Rechercher"
             onClick={() => search(query)}
             disabled={!query.trim() || state === 'loading'}
           >
@@ -138,6 +137,7 @@ export default function SearchPage() {
             <button
               key={hint}
               className="search-ai-hint"
+              disabled={state === 'loading'}
               onClick={() => {
                 setQuery(hint);
                 search(hint);
