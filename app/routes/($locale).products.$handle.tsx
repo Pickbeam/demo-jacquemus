@@ -11,6 +11,7 @@ import {
 import {ProductPrice} from '~/components/ProductPrice';
 import {ProductImage} from '~/components/ProductImage';
 import {ProductForm} from '~/components/ProductForm';
+import {LookComposer} from '~/components/LookComposer';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 
 export const meta: Route.MetaFunction = ({data}) => {
@@ -95,7 +96,7 @@ export default function Product() {
     selectedOrFirstAvailableVariant: selectedVariant,
   });
 
-  const {title, descriptionHtml} = product;
+  const {title, descriptionHtml, tags, productType} = product;
 
   return (
     <div className="product">
@@ -111,7 +112,11 @@ export default function Product() {
           productOptions={productOptions}
           selectedVariant={selectedVariant}
         />
-        <br />
+        <LookComposer
+          productTitle={title}
+          tags={tags ?? []}
+          productType={productType ?? ''}
+        />
         <br />
         <p>
           <strong>Description</strong>
@@ -184,6 +189,8 @@ const PRODUCT_FRAGMENT = `#graphql
     handle
     descriptionHtml
     description
+    tags
+    productType
     encodedVariantExistence
     encodedVariantAvailability
     options {
