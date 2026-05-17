@@ -11,6 +11,7 @@ import {
 import {ProductPrice} from '~/components/ProductPrice';
 import {ProductForm} from '~/components/ProductForm';
 import {LookComposer} from '~/components/LookComposer';
+import {SizeGuide} from '~/components/SizeGuide';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 
 export const meta: Route.MetaFunction = ({data}) => {
@@ -128,6 +129,7 @@ export default function Product() {
             productOptions={productOptions}
             selectedVariant={selectedVariant}
           />
+          <SizeGuide />
           <LookComposer
             productTitle={title}
             tags={tags ?? []}
