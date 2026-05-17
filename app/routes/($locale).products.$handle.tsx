@@ -102,9 +102,9 @@ export default function Product() {
     <div className="product">
       {/* Galerie verticale */}
       <div className="product-gallery">
-        {images.nodes.map((img: {url: string; altText: string | null; width: number | null; height: number | null}, i: number) => (
+        {images.nodes.map((img, i) => (
           <img
-            key={img.url}
+            key={img.id ?? img.url}
             src={img.url}
             alt={img.altText ?? title}
             width={img.width ?? undefined}
@@ -136,7 +136,7 @@ export default function Product() {
 
       {/* Description pleine largeur */}
       <div className="product-description">
-        <p className="product-description-label">Description</p>
+        <h2 className="product-description-label">Description</h2>
         <div
           className="product-description-text"
           dangerouslySetInnerHTML={{__html: descriptionHtml}}
@@ -150,10 +150,10 @@ export default function Product() {
           {
             id: product.id,
             title: product.title,
-            price: selectedVariant?.price.amount || '0',
+            price: selectedVariant?.price.amount ?? '0',
             vendor: product.vendor,
-            variantId: selectedVariant?.id || '',
-            variantTitle: selectedVariant?.title || '',
+            variantId: selectedVariant?.id ?? '',
+            variantTitle: selectedVariant?.title ?? '',
             quantity: 1,
           },
         ],
@@ -212,6 +212,7 @@ const PRODUCT_FRAGMENT = `#graphql
     productType
     images(first: 8) {
       nodes {
+        id
         url
         altText
         width
