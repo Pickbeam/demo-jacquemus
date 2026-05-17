@@ -950,7 +950,7 @@ body > main {
 
 /* Vendor label */
 .product-vendor {
-  font-size: 6px;
+  font-size: 9px;
   letter-spacing: 0.28em;
   text-transform: uppercase;
   color: #C9BFB2;
@@ -1018,7 +1018,7 @@ body > main {
 }
 
 .product-description-label {
-  font-size: 7px;
+  font-size: 9px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: #8a7d6e;
