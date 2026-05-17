@@ -61,17 +61,8 @@ function AddLookButton({products}: {products: ShopifyMCPProduct[]}) {
 
 function LookProductCard({product}: {product: ShopifyMCPProduct}) {
   return (
-    <div
-      style={{
-        background: '#fff',
-        border: '1px solid #E8E3DC',
-        width: '100px',
-        flexShrink: 0,
-        borderRadius: '2px',
-        overflow: 'hidden',
-      }}
-    >
-      <div style={{aspectRatio: '3/4', overflow: 'hidden', background: '#EDE8E1'}}>
+    <div style={{width: '88px', flexShrink: 0}}>
+      <div style={{aspectRatio: '3/4', overflow: 'hidden', background: '#f0ede8', marginBottom: '6px'}}>
         {product.image && (
           <img
             src={product.image}
@@ -81,37 +72,25 @@ function LookProductCard({product}: {product: ShopifyMCPProduct}) {
           />
         )}
       </div>
-      <div style={{padding: '6px 8px 8px'}}>
-        <div
-          style={{
-            fontSize: '6px',
-            letterSpacing: '0.2em',
-            textTransform: 'uppercase',
-            color: '#C9BFB2',
-            marginBottom: '3px',
-          }}
-        >
-          Jacquemus
-        </div>
-        <div
-          style={{
-            fontSize: '8px',
-            fontWeight: 500,
-            letterSpacing: '0.06em',
-            textTransform: 'uppercase',
-            color: '#1a1a1a',
-            lineHeight: 1.3,
-            marginBottom: '4px',
-          }}
-        >
-          {product.title.replace('Jacquemus ', '')}
-        </div>
-        {product.price > 0 && (
-          <div style={{fontSize: '9px', color: '#555'}}>
-            {product.price.toLocaleString('fr-FR')} €
-          </div>
-        )}
+      <div
+        style={{
+          fontSize: '8px',
+          letterSpacing: '0.04em',
+          color: '#1a1a1a',
+          lineHeight: 1.3,
+          marginBottom: '2px',
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        }}
+      >
+        {product.title.replace('Jacquemus ', '')}
       </div>
+      {product.price > 0 && (
+        <div style={{fontSize: '8px', color: '#999', letterSpacing: '0.02em'}}>
+          {product.price.toLocaleString('fr-FR')} €
+        </div>
+      )}
     </div>
   );
 }
@@ -179,28 +158,17 @@ export function LookComposer({productTitle, tags, productType}: LookComposerProp
   }, [productTitle, tags, productType, state]);
 
   return (
-    <div
-      style={{
-        borderTop: '1px solid #E8E3DC',
-        background: '#F5F1EB',
-        padding: '14px 0 16px',
-        marginTop: '24px',
-      }}
-    >
+    <div style={{borderTop: '1px solid #e8e8e8', marginTop: '28px', paddingTop: '20px'}}>
       <div
         style={{
           fontSize: '7px',
-          letterSpacing: '0.22em',
+          letterSpacing: '0.24em',
           textTransform: 'uppercase',
-          color: '#8a7d6e',
-          marginBottom: '12px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
+          color: '#aaa',
+          marginBottom: '14px',
         }}
       >
-        <span style={{color: '#c8a96e', fontSize: '10px'}}>✦</span>
-        Compose le look complet
+        Le look complet
       </div>
 
       {state === 'idle' && (
@@ -208,70 +176,40 @@ export function LookComposer({productTitle, tags, productType}: LookComposerProp
           onClick={compose}
           style={{
             background: 'transparent',
-            border: '1px solid #8a7d6e',
-            color: '#8a7d6e',
-            width: '100%',
-            padding: '9px 0',
-            fontSize: '7px',
-            letterSpacing: '0.18em',
+            border: 'none',
+            borderBottom: '1px solid #1a1a1a',
+            color: '#1a1a1a',
+            padding: '0 0 3px',
+            fontSize: '8px',
+            letterSpacing: '0.14em',
             textTransform: 'uppercase',
             cursor: 'pointer',
-            borderRadius: '2px',
-            transition: 'border-color 0.2s, color 0.2s',
+            transition: 'opacity 0.2s',
           }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = '#1a1a1a';
-            e.currentTarget.style.color = '#1a1a1a';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = '#8a7d6e';
-            e.currentTarget.style.color = '#8a7d6e';
-          }}
+          onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.5')}
+          onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
         >
-          Voir les suggestions →
+          Composer mon look →
         </button>
       )}
 
       {state === 'loading' && (
-        <div style={{display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 0'}}>
-          <span
-            style={{
-              width: '5px',
-              height: '5px',
-              borderRadius: '50%',
-              background: '#C9BFB2',
-              animation: 'lcPulse 1.2s infinite',
-            }}
-          />
-          <span
-            style={{
-              width: '5px',
-              height: '5px',
-              borderRadius: '50%',
-              background: '#C9BFB2',
-              animation: 'lcPulse 1.2s infinite',
-              animationDelay: '0.2s',
-            }}
-          />
-          <span
-            style={{
-              width: '5px',
-              height: '5px',
-              borderRadius: '50%',
-              background: '#C9BFB2',
-              animation: 'lcPulse 1.2s infinite',
-              animationDelay: '0.4s',
-            }}
-          />
-          <span
-            style={{
-              fontSize: '8px',
-              color: '#8a7d6e',
-              letterSpacing: '0.12em',
-              marginLeft: '4px',
-            }}
-          >
-            L&apos;agent compose votre look…
+        <div style={{display: 'flex', alignItems: 'center', gap: '5px', padding: '2px 0'}}>
+          {[0, 0.25, 0.5].map((delay, i) => (
+            <span
+              key={i}
+              style={{
+                width: '4px',
+                height: '4px',
+                borderRadius: '50%',
+                background: '#bbb',
+                animation: 'lcPulse 1.2s infinite',
+                animationDelay: `${delay}s`,
+              }}
+            />
+          ))}
+          <span style={{fontSize: '8px', color: '#aaa', letterSpacing: '0.1em', marginLeft: '6px'}}>
+            Composition en cours…
           </span>
         </div>
       )}
@@ -281,32 +219,24 @@ export function LookComposer({productTitle, tags, productType}: LookComposerProp
           {phrase && (
             <p
               style={{
-                fontSize: '10px',
-                color: '#555',
-                lineHeight: 1.6,
+                fontSize: '9px',
+                color: '#888',
+                lineHeight: 1.7,
                 letterSpacing: '0.02em',
-                marginBottom: '14px',
+                marginBottom: '16px',
                 fontStyle: 'italic',
               }}
             >
               {phrase}
             </p>
           )}
-          <div style={{display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px'}}>
+          <div style={{display: 'flex', gap: '10px', overflowX: 'auto', paddingBottom: '2px', marginBottom: '2px'}}>
             {products.map((p) => (
               <LookProductCard key={p.id} product={p} />
             ))}
           </div>
           <AddLookButton products={products} />
-          <p
-            style={{
-              fontSize: '6px',
-              color: '#aaa',
-              letterSpacing: '0.08em',
-              textAlign: 'center',
-              marginTop: '6px',
-            }}
-          >
+          <p style={{fontSize: '7px', color: '#bbb', letterSpacing: '0.06em', textAlign: 'center', marginTop: '8px'}}>
             Tailles modifiables dans le panier
           </p>
         </>
@@ -314,21 +244,21 @@ export function LookComposer({productTitle, tags, productType}: LookComposerProp
 
       {state === 'error' && (
         <div>
-          <p style={{fontSize: '9px', color: '#888', letterSpacing: '0.06em', marginBottom: '8px'}}>
+          <p style={{fontSize: '9px', color: '#999', letterSpacing: '0.04em', marginBottom: '10px'}}>
             {errorMsg}
           </p>
           <button
             onClick={() => setState('idle')}
             style={{
               background: 'transparent',
-              border: '1px solid #C9BFB2',
-              color: '#8a7d6e',
-              padding: '6px 14px',
+              border: 'none',
+              borderBottom: '1px solid #aaa',
+              color: '#aaa',
+              padding: '0 0 2px',
               fontSize: '7px',
               letterSpacing: '0.14em',
               textTransform: 'uppercase',
               cursor: 'pointer',
-              borderRadius: '2px',
             }}
           >
             Réessayer
