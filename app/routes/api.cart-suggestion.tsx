@@ -22,7 +22,6 @@ const PRODUCTS_QUERY = `#graphql
       nodes {
         id
         title
-        description
         priceRange {
           minVariantPrice { amount currencyCode }
         }
@@ -32,7 +31,6 @@ const PRODUCTS_QUERY = `#graphql
         variants(first: 1) {
           nodes { id }
         }
-        tags
       }
     }
   }
@@ -43,7 +41,12 @@ function sseChunk(event: string, data: unknown): Uint8Array {
 }
 
 export async function action({request, context}: Route.ActionArgs) {
-  const {cartTitles} = (await request.json()) as {cartTitles: string[]};
+  let cartTitles: string[];
+  try {
+    ({cartTitles} = (await request.json()) as {cartTitles: string[]});
+  } catch {
+    return Response.json({error: 'Invalid JSON body'}, {status: 400});
+  }
   const {storefront} = context;
   const env = context.env as unknown as Record<string, string | undefined>;
   const anthropicKey = env.ANTHROPIC_API_KEY ?? '';
@@ -100,17 +103,15 @@ export async function action({request, context}: Route.ActionArgs) {
         enq('text', {text: phrase});
 
         const data = (await storefront.query(PRODUCTS_QUERY, {
-          variables: {first: 4, query: searchQuery},
+          variables: {first: 1, query: searchQuery},
         })) as {
           products: {
             nodes: Array<{
               id: string;
               title: string;
-              description: string;
               priceRange: {minVariantPrice: {amount: string; currencyCode: string}};
               images: {nodes: Array<{url: string; altText: string | null}>};
               variants: {nodes: Array<{id: string}>};
-              tags: string[];
             }>;
           };
         };
