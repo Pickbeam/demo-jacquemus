@@ -16,21 +16,6 @@ export const meta: Route.MetaFunction = () => {
   return [{title: `Hydrogen | Search`}];
 };
 
-export async function loader({request, context}: Route.LoaderArgs) {
-  const url = new URL(request.url);
-  const isPredictive = url.searchParams.has('predictive');
-  const searchPromise: Promise<PredictiveSearchReturn | RegularSearchReturn> =
-    isPredictive
-      ? predictiveSearch({request, context})
-      : regularSearch({request, context});
-
-  searchPromise.catch((error: Error) => {
-    console.error(error);
-    return {term: '', result: null, error: error.message};
-  });
-
-  return await searchPromise;
-}
 
 interface SemanticProduct {
   id: string;

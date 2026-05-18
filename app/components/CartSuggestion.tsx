@@ -15,9 +15,53 @@ interface CartSuggestionProps {
   cartTitles: string[];
 }
 
+function AddSuggestionInner({
+  fetcher,
+  onSuccess,
+}: {
+  fetcher: FetcherWithComponents<unknown>;
+  onSuccess: () => void;
+}) {
+  const prevStateRef = useRef('idle');
+
+  useEffect(() => {
+    const wasLoading = prevStateRef.current !== 'idle';
+    if (wasLoading && fetcher.state === 'idle' && fetcher.data) {
+      const d = fetcher.data as {errors?: unknown[]};
+      if (!d.errors?.length) onSuccess();
+    }
+    prevStateRef.current = fetcher.state;
+  }, [fetcher.state, fetcher.data, onSuccess]);
+
+  const loading = fetcher.state !== 'idle';
+  return (
+    <button
+      type="submit"
+      aria-label="Ajouter au panier"
+      disabled={loading}
+      style={{
+        background: 'transparent',
+        border: 'none',
+        borderBottom: `1px solid ${loading ? '#ccc' : '#1a1a1a'}`,
+        color: loading ? '#ccc' : '#1a1a1a',
+        padding: '0 0 2px',
+        fontSize: '7px',
+        letterSpacing: '0.14em',
+        textTransform: 'uppercase',
+        cursor: loading ? 'wait' : 'pointer',
+        marginTop: '10px',
+        transition: 'opacity 0.2s',
+        fontFamily: 'inherit',
+      }}
+    >
+      {loading ? '···' : 'Ajouter →'}
+    </button>
+  );
+}
+
 function AddSuggestionButton({variantId}: {variantId: string}) {
   const {open} = useAside();
-  const prev = useRef('idle');
+  const handleSuccess = useCallback(() => open('cart'), [open]);
 
   return (
     <CartForm
@@ -25,36 +69,9 @@ function AddSuggestionButton({variantId}: {variantId: string}) {
       action={CartForm.ACTIONS.LinesAdd}
       inputs={{lines: [{merchandiseId: variantId, quantity: 1}]}}
     >
-      {(fetcher: FetcherWithComponents<unknown>) => {
-        if (prev.current !== 'idle' && fetcher.state === 'idle' && fetcher.data) {
-          const d = fetcher.data as {errors?: unknown[]};
-          if (!d.errors?.length) open('cart');
-        }
-        prev.current = fetcher.state;
-        const loading = fetcher.state !== 'idle';
-        return (
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              borderBottom: `1px solid ${loading ? '#ccc' : '#1a1a1a'}`,
-              color: loading ? '#ccc' : '#1a1a1a',
-              padding: '0 0 2px',
-              fontSize: '7px',
-              letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-              cursor: loading ? 'wait' : 'pointer',
-              marginTop: '10px',
-              transition: 'opacity 0.2s',
-              fontFamily: 'inherit',
-            }}
-          >
-            {loading ? '···' : 'Ajouter →'}
-          </button>
-        );
-      }}
+      {(fetcher: FetcherWithComponents<unknown>) => (
+        <AddSuggestionInner fetcher={fetcher} onSuccess={handleSuccess} />
+      )}
     </CartForm>
   );
 }

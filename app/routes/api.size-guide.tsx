@@ -38,7 +38,7 @@ export async function action({request, context}: Route.ActionArgs) {
   const env = context.env as unknown as Record<string, string | undefined>;
   const anthropicKey = env.ANTHROPIC_API_KEY ?? '';
 
-  if (!anthropicKey) {
+  if (!anthropicKey || anthropicKey.startsWith('sk-ant-REPLACE')) {
     return Response.json({error: 'ANTHROPIC_API_KEY not configured'}, {status: 500});
   }
 

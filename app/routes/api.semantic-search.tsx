@@ -49,7 +49,12 @@ interface ParseResult {
 }
 
 export async function action({request, context}: Route.ActionArgs) {
-  const {query} = (await request.json()) as {query: string};
+  let query: string;
+  try {
+    ({query} = (await request.json()) as {query: string});
+  } catch {
+    return Response.json({error: 'Invalid JSON body'}, {status: 400});
+  }
   if (!query || typeof query !== 'string') {
     return Response.json({error: 'query is required'}, {status: 400});
   }
