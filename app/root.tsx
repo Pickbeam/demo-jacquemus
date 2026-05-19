@@ -1,4 +1,4 @@
-import {Analytics, getShopAnalytics, useNonce} from '@shopify/hydrogen';
+import {Analytics, getShopAnalytics, storefrontRedirect, useNonce} from '@shopify/hydrogen';
 import {
   Outlet,
   useRouteError,
@@ -11,6 +11,7 @@ import {
   useRouteLoaderData,
 } from 'react-router';
 import type {Route} from './+types/root';
+import {createHydrogenRouterContext} from '~/lib/context';
 import favicon from '~/assets/favicon.svg';
 import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
 import resetStyles from '~/styles/reset.css?url';
@@ -19,6 +20,41 @@ import tailwindCss from './styles/tailwind.css?url';
 import {PageLayout} from './components/PageLayout';
 
 export type RootLoader = typeof loader;
+
+/**
+ * Middleware: initializes Hydrogen context on Vercel (or any non-Oxygen runtime).
+ * On Oxygen, server.ts already provides context via getLoadContext — this is a no-op.
+ * On Vercel, context starts empty so we populate it from process.env here.
+ */
+export const middleware = [
+  async (
+    {request, context}: {request: Request; context: Record<string, unknown>},
+    next: () => Promise<Response>,
+  ) => {
+    if (!context.storefront) {
+      const hydrogenContext = await createHydrogenRouterContext(request);
+      Object.assign(context, hydrogenContext);
+    }
+
+    const response = await next();
+
+    const session = context.session as
+      | {isPending?: boolean; commit(): Promise<string>}
+      | undefined;
+    if (session?.isPending) {
+      response.headers.set('Set-Cookie', await session.commit());
+    }
+
+    if (response.status === 404) {
+      const {storefront} = context as {storefront?: Parameters<typeof storefrontRedirect>[0]['storefront']};
+      if (storefront) {
+        return storefrontRedirect({request, response, storefront});
+      }
+    }
+
+    return response;
+  },
+];
 
 /**
  * This is important to avoid re-fetching root queries on sub-navigations

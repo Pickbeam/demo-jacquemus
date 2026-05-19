@@ -5,7 +5,8 @@ import {reactRouter} from '@react-router/dev/vite';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  plugins: [tailwindcss(), hydrogen(), oxygen(), reactRouter()],
+  // oxygen() forces Workers/webworker build target — skip it on Vercel
+  plugins: [tailwindcss(), hydrogen(), ...(process.env.VERCEL ? [] : [oxygen()]), reactRouter()],
   resolve: {
     tsconfigPaths: true,
   },

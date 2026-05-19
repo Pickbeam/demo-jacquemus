@@ -22,28 +22,51 @@ declare global {
 /**
  * Creates Hydrogen context for React Router 7.9.x
  * Returns HydrogenRouterContextProvider with hybrid access patterns
- * */
+ *
+ * When deployed on Vercel (without Oxygen), env and executionContext are
+ * optional and fall back to process.env / no-op respectively.
+ */
 export async function createHydrogenRouterContext(
   request: Request,
-  env: Env,
-  executionContext: ExecutionContext,
+  env?: Env,
+  executionContext?: ExecutionContext,
 ) {
-  /**
-   * Open a cache instance in the worker and a custom session instance.
-   */
-  if (!env?.SESSION_SECRET) {
+  const resolvedEnv: Env = env ?? ({
+    SESSION_SECRET: process.env.SESSION_SECRET!,
+    PUBLIC_STORE_DOMAIN: process.env.PUBLIC_STORE_DOMAIN!,
+    PUBLIC_STOREFRONT_API_TOKEN: process.env.PUBLIC_STOREFRONT_API_TOKEN!,
+    PUBLIC_STOREFRONT_API_VERSION: process.env.PUBLIC_STOREFRONT_API_VERSION!,
+    SHOPIFY_ADMIN_API_TOKEN: process.env.SHOPIFY_ADMIN_API_TOKEN,
+    ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
+    FIRECRAWL_API_KEY: process.env.FIRECRAWL_API_KEY,
+    // Optional Shopify vars
+    PUBLIC_STOREFRONT_ID: process.env.PUBLIC_STOREFRONT_ID,
+    PUBLIC_CHECKOUT_DOMAIN: process.env.PUBLIC_CHECKOUT_DOMAIN,
+    PRIVATE_STOREFRONT_API_TOKEN: process.env.PRIVATE_STOREFRONT_API_TOKEN,
+    PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID: process.env.PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID,
+    PUBLIC_CUSTOMER_ACCOUNT_API_URL: process.env.PUBLIC_CUSTOMER_ACCOUNT_API_URL,
+    SHOP_ID: process.env.SHOP_ID,
+  } as unknown as Env);
+
+  if (!resolvedEnv?.SESSION_SECRET) {
     throw new Error('SESSION_SECRET environment variable is not set');
   }
 
-  const waitUntil = executionContext.waitUntil.bind(executionContext);
-  const [cache, session] = await Promise.all([
-    caches.open('hydrogen'),
-    AppSession.init(request, [env.SESSION_SECRET]),
+  const waitUntil = executionContext
+    ? executionContext.waitUntil.bind(executionContext)
+    : (_p: Promise<unknown>) => {};
+
+  // caches API is available in Workers/Edge but not standard Node.js
+  const cache =
+    typeof caches !== 'undefined' ? await caches.open('hydrogen') : undefined;
+
+  const [session] = await Promise.all([
+    AppSession.init(request, [resolvedEnv.SESSION_SECRET]),
   ]);
 
   const hydrogenContext = createHydrogenContext(
     {
-      env,
+      env: resolvedEnv,
       request,
       cache,
       waitUntil,

@@ -10,4 +10,6 @@ import {hydrogenPreset} from '@shopify/hydrogen/react-router-preset';
  */
 export default {
   presets: [hydrogenPreset()],
+  // Override hydrogenPreset's 'dist' so Vercel can find the output in 'build'
+  buildDirectory: 'build',
 } satisfies Config;
