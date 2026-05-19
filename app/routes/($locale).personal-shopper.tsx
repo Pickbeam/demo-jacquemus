@@ -1,89 +1,29 @@
-import {useState, useEffect, useRef, useCallback, useMemo} from 'react';
+import {useState, useRef, useCallback} from 'react';
 import type {MetaFunction} from 'react-router';
-import {useLoaderData} from 'react-router';
+import type {FetcherWithComponents} from 'react-router';
 import type {Route} from './+types/($locale).personal-shopper';
-import {AddToCartButton} from '~/components/AddToCartButton';
-import {searchShopCatalog} from '~/lib/mcp-client';
-import type {CatalogProduct} from '~/routes/api.catalog-search';
-
-const PERSONAL_SHOPPER_PRODUCTS_QUERY = `#graphql
-  query PersonalShopperProducts($first: Int!) {
-    products(first: $first) {
-      nodes {
-        id
-        title
-        description
-        tags
-        priceRange {
-          minVariantPrice { amount currencyCode }
-        }
-        images(first: 1) {
-          nodes { url }
-        }
-        variants(first: 1) {
-          nodes { id }
-        }
-      }
-    }
-  }
-` as const;
+import {CartForm} from '@shopify/hydrogen';
+import {useAside} from '~/components/Aside';
+import type {ShopifyMCPProduct} from '~/lib/shopify-mcp-client';
 
 export const meta: MetaFunction = () => [
   {title: 'Personal Shopper — JACQUEMUS'},
 ];
 
-export async function loader({context}: Route.LoaderArgs) {
-  const data = await context.storefront.query(
-    PERSONAL_SHOPPER_PRODUCTS_QUERY,
-    {variables: {first: 20}},
-  ) as {products: {nodes: Array<{
-    id: string;
-    title: string;
-    description: string;
-    tags: string[];
-    priceRange: {minVariantPrice: {amount: string; currencyCode: string}};
-    images: {nodes: Array<{url: string}>};
-    variants: {nodes: Array<{id: string}>};
-  }>}};
-
-  return {
-    products: data.products.nodes.map((p) => ({
-      id: p.id,
-      title: p.title,
-      price: parseFloat(p.priceRange.minVariantPrice.amount),
-      image: p.images.nodes[0]?.url ?? '',
-      description: p.description,
-      variantId: p.variants.nodes[0]?.id ?? '',
-    })),
-  };
+// Loader kept for potential future use (e.g. prefetch featured products)
+export async function loader(_: Route.LoaderArgs) {
+  return {};
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-interface ProductRef {
-  id: string;
-  title: string;
-  price: number;
-  image: string;
-  description: string;
-  variantId: string;
-  contextNote?: string;
-}
-
-interface Look {
-  name: string;
-  description: string;
-  items: ProductRef[];
-  total: number;
-}
+type ProductRef = ShopifyMCPProduct;
 
 interface Message {
   id: string;
   role: 'user' | 'agent';
   content: string;
-  looks?: Look[];
   products?: ProductRef[];
-  contextNote?: string;
   timestamp: Date;
 }
 
@@ -95,226 +35,249 @@ interface FlowEntry {
   detail?: string;
 }
 
-interface QuickPromptScript {
-  label: string;
-  userMessage: string;
-  flowEntries: Array<{delay: number; direction: '▸' | '◂'; label: string; detail?: string}>;
-  agentResponseDelay: number;
-  agentContent: string;
-  looks?: Look[];
-  products?: ProductRef[];
-  contextNote?: string;
-}
+// ─── Quick prompts ────────────────────────────────────────────────────────────
 
-// ─── Scripts des 3 quick-prompts ─────────────────────────────────────────────
+const QUICK_PROMPTS = [
+  'Un sac iconique pour le quotidien ou le soir',
+  'Une robe élégante pour un mariage ou une soirée',
+  'Des chaussures pour un événement chic',
+];
 
-function buildScripts(
-  gp: (title: string) => ProductRef,
-): Record<string, QuickPromptScript> {
-  return {
-    mariage: {
-      label: 'Tenue pour un mariage en Provence en juin, budget 800€, je fais du 36',
-      userMessage: 'Tenue pour un mariage en Provence en juin, budget 800€, je fais du 36',
-      flowEntries: [
-        {delay: 0, direction: '▸', label: 'User input received', detail: '"Tenue pour un mariage en Provence en juin, budget 800€, je fais du 36"'},
-        {delay: 350, direction: '▸', label: 'Calling Storefront MCP', detail: `POST /api/catalog-search\nMethod: search_shop_catalog\n\nPayload:\n{\n  "query": "wedding outfit Provence June summer",\n  "filters": {\n    "size": "36",\n    "price_max": 800,\n    "category": ["dress", "shoes", "bag"],\n    "occasion": ["wedding", "garden_party"]\n  }\n}`},
-        {delay: 1500, direction: '◂', label: 'MCP Response (200 OK)', detail: `6 products returned with inference tags\nDuration: real Storefront API latency`},
-        {delay: 1900, direction: '▸', label: 'Calling Claude API — outfit composition', detail: 'Building 3 complete looks from 6 candidate products\nContext: Provence wedding, June, size 36, budget €800'},
-        {delay: 3600, direction: '◂', label: 'Claude response', detail: '3 outfit compositions generated\n\n· Look A — La Romantique      770€\n· Look B — L\'Esprit Libre      670€\n· Look C — La Moderne          770€'},
-        {delay: 3800, direction: '▸', label: 'Rendering UI', detail: 'ProductCards injected into chat thread'},
-      ],
-      agentResponseDelay: 4200,
-      agentContent: "J'ai analysé votre demande et sélectionné **3 looks** parfaits pour un mariage en Provence en juin. Chaque ensemble respecte votre budget de 800€ et est disponible en taille 36.",
-      looks: [
-        {name: 'Look A — La Romantique', description: "Robe fluide et sac naturel — l'alliance parfaite pour un mariage en plein air provençal.", items: [gp('La Bomba'), gp('Le Bambino Large')], total: 770},
-        {name: "Look B — L'Esprit Libre", description: 'Mini-robe épaules dénudées et sandales plateformes pour une silhouette décontractée-chic.', items: [gp('Le Souffle'), gp('Les Pralu')], total: 670},
-        {name: 'Look C — La Moderne', description: 'Combinaison wide-leg en soie et mules carrées — élégance contemporaine.', items: [gp('La Riviera'), gp('Les Classiques')], total: 770},
-      ],
-    },
-
-    fruits: {
-      label: 'Le truc avec les fruits de la pop-up Saint-Tropez',
-      userMessage: 'Le truc avec les fruits de la pop-up Saint-Tropez',
-      flowEntries: [
-        {delay: 0, direction: '▸', label: 'User input received', detail: '"Le truc avec les fruits de la pop-up Saint-Tropez"'},
-        {delay: 350, direction: '▸', label: 'Calling Storefront MCP', detail: `POST /api/catalog-search\nMethod: search_shop_catalog\n\nPayload:\n{\n  "query": "fruits pop-up Saint-Tropez 2024",\n  "filters": {\n    "collection": ["saint-tropez-2024", "limited-edition"]\n  }\n}`},
-        {delay: 700, direction: '▸', label: 'Semantic intent matching', detail: 'Inference engine activé\nQuery intent: "pop-up tropez fruits"\n→ Collection tag: "saint-tropez-2024"\n→ Expanding to: Le Citron, Le Banane, Le Tomate'},
-        {delay: 1500, direction: '◂', label: 'MCP Response (200 OK)', detail: `3 products — Collection: Pop-Up Saint-Tropez 2024\n\n{\n  "collection_context": {\n    "event": "Pop-Up Saint-Tropez",\n    "year": 2024,\n    "theme": "Mediterranean Fruits",\n    "availability": "limited-edition",\n    "pieces": ["Le Citron", "Le Banane", "Le Tomate"]\n  }\n}`},
-        {delay: 1800, direction: '▸', label: 'Rendering UI', detail: 'Collection context cards ready'},
-      ],
-      agentResponseDelay: 2200,
-      agentContent: "Vous cherchez les pièces **fruits** de la pop-up Saint-Tropez 2024 ! Ces 3 bags iconiques de la collection méditerranée sont des éditions limitées très demandées.",
-      products: [
-        {...gp('Le Citron'), contextNote: 'Le plus ensoleillé — sold-out en ligne'},
-        {...gp('Le Banane'), contextNote: 'Mini format — parfait en clutch'},
-        {...gp('Le Tomate'), contextNote: 'Le statement piece de la collection'},
-      ],
-      contextNote: '✦ Pièces iconiques — Pop-Up Saint-Tropez 2024',
-    },
-
-    sac: {
-      label: 'Un sac qui va avec une robe noire pour le soir',
-      userMessage: 'Un sac qui va avec une robe noire pour le soir',
-      flowEntries: [
-        {delay: 0, direction: '▸', label: 'User input received', detail: '"Un sac qui va avec une robe noire pour le soir"'},
-        {delay: 350, direction: '▸', label: 'Calling Storefront MCP', detail: `POST /api/catalog-search\nMethod: search_shop_catalog\n\nPayload:\n{\n  "query": "bag black evening",\n  "filters": {\n    "category": ["bag"],\n    "occasion": ["evening", "cocktail"],\n    "mood": ["glamorous", "chic", "elegant"]\n  }\n}`},
-        {delay: 1200, direction: '◂', label: 'MCP Response (200 OK)', detail: '3 products matched — evening bags'},
-        {delay: 1600, direction: '▸', label: 'Rendering UI', detail: 'ProductCards injected'},
-      ],
-      agentResponseDelay: 2000,
-      agentContent: "Pour une robe noire en soirée, voici **3 sacs iconiques** Jacquemus qui sublimeront votre tenue.",
-      products: [
-        {...gp('Le Bambino Noir Verni'), contextNote: 'Le verni capte la lumière — idéal pour les soirées'},
-        {...gp('Le Chiquito Noir'), contextNote: 'La silhouette mini pour les soirées épurées'},
-        {...gp('Le Cabas Noir'), contextNote: 'Le grand format si vous voyagez léger toute la soirée'},
-      ],
-    },
-  };
-}
-
-// ─── Snippets de code source pour la modale ──────────────────────────────────
+// ─── Source snippets for the modal ───────────────────────────────────────────
 
 const SOURCE_SNIPPETS = {
-  mcpRoute: `// app/routes/api.mcp.tsx
-// Pattern Hydrogen 2026.1.4+ — proxy MCP vers Storefront API
-import {createMCPHandler} from '@shopify/hydrogen/mcp';
-
-export async function action({request, context}) {
-  return createMCPHandler({
-    storefront: context.storefront,
-    customerAccount: context.customerAccount,
-    // Le handler gère automatiquement :
-    // - l'auth OAuth Storefront
-    // - la pagination cursors
-    // - le cache Oxygen edge (TTL configurable)
-    // - le schema inference_attributes
-  }).handle(request);
-}`,
-
-  mcpClient: `// app/lib/mcp-client.ts
-// Client typé pour appeler le MCP Storefront
-export async function searchShopCatalog(
-  payload: MCPSearchPayload,
-  onLog?: (entry: MCPLogEntry) => void,
-): Promise<Product[]> {
-  onLog?.({ direction: 'request', method: 'search_shop_catalog', payload });
-
-  const res = await fetch('/api/catalog-search', {
+  mcpClient: `// app/lib/shopify-mcp-client.ts
+export async function callShopifyMCPTool(
+  mcpUrl: string, token: string,
+  toolName: string, input: Record<string, unknown>,
+): Promise<unknown> {
+  const res = await fetch(mcpUrl, {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Shopify-Storefront-Access-Token': token,
+    },
     body: JSON.stringify({
-      query: payload.query,
-      filters: payload.filters,
+      jsonrpc: '2.0', id: 1,
+      method: 'tools/call',
+      params: { name: toolName, arguments: {
+        'meta.ucp-agent.profile': AGENT_PROFILE,
+        'catalog.context': { language: 'fr', currency: 'EUR' },
+        ...input,
+      }},
     }),
   });
-
   const data = await res.json();
-  onLog?.({ direction: 'response', statusCode: res.status, payload: data });
-  return data.products;
+  return data.result; // { content: [{ type: 'text', text: '...' }] }
 }`,
 
-  component: `// Appel MCP depuis le composant React
-async function processUserMessage(input: string) {
-  const products = await searchShopCatalog({
-    query: input,
-    filters: extractFilters(input),   // NLP côté client
-    include_inference_attributes: true,
-  }, (entry) => {
-    // Chaque log MCP est streamé en temps réel dans le panneau debug
-    setFlowLog((prev) => [...prev, { ...entry, id: crypto.randomUUID() }]);
+  chatRoute: `// app/routes/api.chat.tsx
+// SSE endpoint: Claude + Shopify MCP agentic loop
+export async function action({ request }) {
+  const { message } = await request.json();
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+  return new Response(new ReadableStream({
+    async start(controller) {
+      const tools = await listShopifyMCPTools(MCP_URL, TOKEN);
+      const messages = [{ role: 'user', content: message }];
+
+      while (true) {
+        const stream = client.messages.stream({
+          model: 'claude-sonnet-4-6',
+          tools, messages,
+        });
+
+        // Stream text chunks to client
+        for await (const event of stream) {
+          if (event.type === 'content_block_delta' &&
+              event.delta.type === 'text_delta') {
+            controller.enqueue(sse('text', { delta: event.delta.text }));
+          }
+        }
+
+        const msg = await stream.finalMessage();
+        if (msg.stop_reason !== 'tool_use') break;
+
+        // Execute tool calls via Shopify MCP
+        for (const t of msg.content.filter(b => b.type === 'tool_use')) {
+          const result = await callShopifyMCPTool(t.name, t.input);
+          const products = parseProductsFromMCPResult(result);
+          if (products.length) controller.enqueue(sse('products', { products }));
+        }
+      }
+
+      controller.close();
+    }
+  }), { headers: { 'Content-Type': 'text/event-stream' } });
+}`,
+
+  component: `// app/routes/($locale).personal-shopper.tsx
+async function sendMessage(text: string) {
+  const res = await fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message: text }),
   });
 
-  // Claude compose les looks depuis les produits retournés
-  const looks = await claudeComposeLooks(products, userContext);
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '', currentEvent = '';
 
-  addMessage({ role: 'agent', content: looks.summary, looks });
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    for (const line of buffer.split('\\n')) {
+      if (line.startsWith('event: ')) currentEvent = line.slice(7).trim();
+      if (line.startsWith('data: ')) {
+        const data = JSON.parse(line.slice(6));
+        if (currentEvent === 'text')     appendToAgentMessage(data.delta);
+        if (currentEvent === 'products') setAgentProducts(data.products);
+        if (currentEvent === 'log')      addFlowEntry(data);
+      }
+    }
+    buffer = '';
+  }
 }`,
 };
 
-// ─── Composants ───────────────────────────────────────────────────────────────
+// ─── Components ───────────────────────────────────────────────────────────────
+
+function CartButton({variantId}: {variantId: string}) {
+  const {open} = useAside();
+  const prevState = useRef<string>('idle');
+
+  if (!variantId) {
+    return (
+      <span
+        style={{
+          display: 'block',
+          padding: '8px 0',
+          background: 'transparent',
+          color: '#C9BFB2',
+          fontSize: '8px',
+          letterSpacing: '0.16em',
+          textTransform: 'uppercase',
+          border: '1px solid #ddd6cc',
+          cursor: 'not-allowed',
+          marginTop: '8px',
+          textAlign: 'center',
+        }}
+      >
+        Indisponible
+      </span>
+    );
+  }
+
+  return (
+    <CartForm
+      route="/cart"
+      inputs={{lines: [{merchandiseId: variantId, quantity: 1}]}}
+      action={CartForm.ACTIONS.LinesAdd}
+    >
+      {(fetcher: FetcherWithComponents<unknown>) => {
+        if (prevState.current !== 'idle' && fetcher.state === 'idle' && fetcher.data) {
+          const d = fetcher.data as {errors?: unknown[]};
+          if (!d.errors?.length) open('cart');
+        }
+        prevState.current = fetcher.state;
+        const loading = fetcher.state !== 'idle';
+        return (
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              display: 'block',
+              width: '100%',
+              padding: '8px 0',
+              background: 'transparent',
+              color: loading ? '#C9BFB2' : '#1A1A1A',
+              fontSize: '8px',
+              letterSpacing: '0.16em',
+              textTransform: 'uppercase',
+              border: `1px solid ${loading ? '#ddd6cc' : '#1A1A1A'}`,
+              cursor: loading ? 'wait' : 'pointer',
+              marginTop: '8px',
+              transition: 'border-color 0.2s, color 0.2s',
+            }}
+          >
+            {loading ? '···' : 'Ajouter au panier'}
+          </button>
+        );
+      }}
+    </CartForm>
+  );
+}
 
 function ProductCard({product}: {product: ProductRef}) {
   return (
     <div
       style={{
         background: '#fff',
-        borderRadius: '2px',
+        border: '1px solid #E8E3DC',
         overflow: 'hidden',
-        border: '1px solid #e8e4de',
         display: 'flex',
         flexDirection: 'column',
-        minWidth: '160px',
-        maxWidth: '180px',
+        minWidth: '170px',
+        maxWidth: '190px',
         flexShrink: 0,
       }}
     >
-      <div style={{aspectRatio: '4/5', overflow: 'hidden', background: '#f0ede8'}}>
-        <img
-          src={product.image}
-          alt={product.title}
-          style={{width: '100%', height: '100%', objectFit: 'cover', display: 'block'}}
-          loading="lazy"
-        />
-      </div>
-      <div style={{padding: '10px', flex: 1, display: 'flex', flexDirection: 'column', gap: '4px'}}>
-        <div style={{fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#1A1A1A'}}>
-          {product.title}
-        </div>
-        <div style={{fontSize: '12px', color: '#666'}}>{product.description}</div>
-        <div style={{fontSize: '13px', fontWeight: 600, color: '#1A1A1A', marginTop: 'auto', paddingTop: '6px'}}>
-          {product.price.toLocaleString('fr-FR')} €
-        </div>
-        {product.contextNote && (
-          <div style={{fontSize: '10px', color: '#8B7355', fontStyle: 'italic'}}>{product.contextNote}</div>
+      <div style={{aspectRatio: '3/4', overflow: 'hidden', background: '#F0ECE5'}}>
+        {product.image && (
+          <img
+            src={product.image}
+            alt={product.title}
+            style={{width: '100%', height: '100%', objectFit: 'cover', display: 'block'}}
+            loading="lazy"
+          />
         )}
-        <AddToCartButton
-          lines={[{merchandiseId: product.variantId, quantity: 1}]}
-          disabled={!product.variantId}
+      </div>
+      <div
+        style={{
+          padding: '12px 14px 16px',
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '4px',
+        }}
+      >
+        <div
+          style={{
+            fontSize: '8px',
+            letterSpacing: '0.2em',
+            textTransform: 'uppercase',
+            color: '#C9BFB2',
+            marginBottom: '2px',
+          }}
         >
-          <span style={{
-            display: 'block',
-            padding: '6px 12px',
-            background: product.variantId ? '#1A1A1A' : '#ccc',
-            color: '#fff',
-            fontSize: '10px',
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase' as const,
-            cursor: product.variantId ? 'pointer' : 'not-allowed',
-          }}>
-            ADD TO CART
-          </span>
-        </AddToCartButton>
-      </div>
-    </div>
-  );
-}
-
-function LookCard({look}: {look: Look}) {
-  return (
-    <div
-      style={{
-        background: '#fff',
-        borderRadius: '2px',
-        border: '1px solid #e8e4de',
-        padding: '16px',
-        marginBottom: '12px',
-      }}
-    >
-      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '6px'}}>
-        <div style={{fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#1A1A1A'}}>
-          {look.name}
+          {product.productType || 'Jacquemus'}
         </div>
-        <div style={{fontSize: '13px', fontWeight: 600, color: '#1A1A1A'}}>
-          {look.total.toLocaleString('fr-FR')} €
+        <div
+          style={{
+            fontSize: '11px',
+            fontWeight: 500,
+            letterSpacing: '0.06em',
+            textTransform: 'uppercase',
+            color: '#1A1A1A',
+            lineHeight: 1.35,
+          }}
+        >
+          {product.title.replace('Jacquemus ', '')}
         </div>
-      </div>
-      <div style={{fontSize: '12px', color: '#666', marginBottom: '14px', lineHeight: 1.5}}>
-        {look.description}
-      </div>
-      <div style={{display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '4px'}}>
-        {look.items.map((p) => (
-          <ProductCard key={p.id} product={p} />
-        ))}
+        <div
+          style={{
+            fontSize: '12px',
+            color: '#1A1A1A',
+            letterSpacing: '0.03em',
+            marginTop: '6px',
+            flex: 1,
+          }}
+        >
+          {product.price > 0 ? `${product.price.toLocaleString('fr-FR')} €` : ''}
+        </div>
+        <CartButton variantId={product.variantId} />
       </div>
     </div>
   );
@@ -328,11 +291,19 @@ function FlowEntryDisplay({entry, isNew}: {entry: FlowEntry; isNew: boolean}) {
         padding: '10px 16px',
         borderBottom: '1px solid #2a2a2a',
         animation: isNew ? 'fadeSlideIn 0.3s ease-out' : 'none',
-        opacity: 1,
       }}
     >
-      <div style={{display: 'flex', gap: '8px', alignItems: 'baseline', marginBottom: entry.detail ? '6px' : 0}}>
-        <span style={{color: '#555', fontSize: '10px', fontFamily: 'monospace', whiteSpace: 'nowrap'}}>
+      <div
+        style={{
+          display: 'flex',
+          gap: '8px',
+          alignItems: 'baseline',
+          marginBottom: entry.detail ? '6px' : 0,
+        }}
+      >
+        <span
+          style={{color: '#555', fontSize: '10px', fontFamily: 'monospace', whiteSpace: 'nowrap'}}
+        >
           [{entry.timestamp}]
         </span>
         <span style={{color: isRequest ? '#4ade80' : '#60a5fa', fontSize: '11px'}}>
@@ -362,19 +333,13 @@ function FlowEntryDisplay({entry, isNew}: {entry: FlowEntry; isNew: boolean}) {
 }
 
 function SourceModal({onClose}: {onClose: () => void}) {
-  const [activeTab, setActiveTab] = useState<'route' | 'client' | 'component'>('route');
+  const [activeTab, setActiveTab] = useState<'mcpClient' | 'chatRoute' | 'component'>('chatRoute');
 
-  const tabs: Array<{key: 'route' | 'client' | 'component'; label: string}> = [
-    {key: 'route', label: 'api.mcp.tsx'},
-    {key: 'client', label: 'mcp-client.ts'},
-    {key: 'component', label: 'Component call'},
+  const tabs: Array<{key: 'mcpClient' | 'chatRoute' | 'component'; label: string}> = [
+    {key: 'chatRoute', label: 'api.chat.tsx'},
+    {key: 'mcpClient', label: 'shopify-mcp-client.ts'},
+    {key: 'component', label: 'Component stream'},
   ];
-
-  const snippetMap = {
-    route: SOURCE_SNIPPETS.mcpRoute,
-    client: SOURCE_SNIPPETS.mcpClient,
-    component: SOURCE_SNIPPETS.component,
-  };
 
   return (
     <div
@@ -402,26 +367,40 @@ function SourceModal({onClose}: {onClose: () => void}) {
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: '12px 16px',
-          borderBottom: '1px solid #2a2a2a',
-        }}>
-          <div style={{color: '#e5e5e5', fontSize: '12px', fontFamily: 'monospace', fontWeight: 600}}>
-            Hydrogen × Storefront MCP — Pattern d'intégration
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '12px 16px',
+            borderBottom: '1px solid #2a2a2a',
+          }}
+        >
+          <div
+            style={{
+              color: '#e5e5e5',
+              fontSize: '12px',
+              fontFamily: 'monospace',
+              fontWeight: 600,
+            }}
+          >
+            Claude × Shopify Storefront MCP — Pattern d'intégration
           </div>
           <button
             onClick={onClose}
-            style={{color: '#666', background: 'none', border: 'none', fontSize: '18px', cursor: 'pointer', lineHeight: 1}}
+            style={{
+              color: '#666',
+              background: 'none',
+              border: 'none',
+              fontSize: '18px',
+              cursor: 'pointer',
+              lineHeight: 1,
+            }}
           >
             ×
           </button>
         </div>
 
-        {/* Tabs */}
         <div style={{display: 'flex', borderBottom: '1px solid #2a2a2a'}}>
           {tabs.map((tab) => (
             <button
@@ -431,7 +410,8 @@ function SourceModal({onClose}: {onClose: () => void}) {
                 padding: '8px 16px',
                 background: activeTab === tab.key ? '#1a1a1a' : 'transparent',
                 border: 'none',
-                borderBottom: activeTab === tab.key ? '2px solid #4ade80' : '2px solid transparent',
+                borderBottom:
+                  activeTab === tab.key ? '2px solid #4ade80' : '2px solid transparent',
                 color: activeTab === tab.key ? '#e5e5e5' : '#666',
                 fontSize: '11px',
                 fontFamily: 'monospace',
@@ -443,7 +423,6 @@ function SourceModal({onClose}: {onClose: () => void}) {
           ))}
         </div>
 
-        {/* Code */}
         <div style={{flex: 1, overflow: 'auto', padding: '16px'}}>
           <pre
             style={{
@@ -455,23 +434,27 @@ function SourceModal({onClose}: {onClose: () => void}) {
               whiteSpace: 'pre-wrap',
             }}
           >
-            <code>{snippetMap[activeTab]}</code>
+            <code>{SOURCE_SNIPPETS[activeTab]}</code>
           </pre>
         </div>
 
-        {/* Footer note */}
-        <div style={{padding: '10px 16px', borderTop: '1px solid #2a2a2a', color: '#555', fontSize: '10px', fontFamily: 'monospace'}}>
-          Ce pattern est disponible dès Hydrogen 2026.1.4 — aucune configuration Shopify supplémentaire requise
+        <div
+          style={{
+            padding: '10px 16px',
+            borderTop: '1px solid #2a2a2a',
+            color: '#555',
+            fontSize: '10px',
+            fontFamily: 'monospace',
+          }}
+        >
+          Claude appelle search_catalog via JSON-RPC 2.0 sur le Storefront MCP de Shopify
         </div>
       </div>
     </div>
   );
 }
 
-// ─── Composant principal ──────────────────────────────────────────────────────
-
 function renderMessageContent(content: string): React.ReactNode {
-  // Simple bold markdown support: **text**
   const parts = content.split(/(\*\*[^*]+\*\*)/g);
   return parts.map((part, i) =>
     part.startsWith('**') && part.endsWith('**') ? (
@@ -482,46 +465,29 @@ function renderMessageContent(content: string): React.ReactNode {
   );
 }
 
+// ─── Main component ───────────────────────────────────────────────────────────
+
 export default function PersonalShopperPage() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'welcome',
       role: 'agent',
-      content: 'Bonjour, je suis votre Personal Shopper Jacquemus. Je peux vous aider à trouver la pièce idéale, composer un look complet, ou retrouver une pièce spécifique de nos collections.',
+      content:
+        'Bonjour, je suis votre Personal Shopper Jacquemus. Je peux vous aider à trouver la pièce idéale de la collection — sacs, robes, chaussures.',
       timestamp: new Date(),
     },
   ]);
   const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [flowLog, setFlowLog] = useState<FlowEntry[]>([]);
   const [newEntryIds, setNewEntryIds] = useState<Set<string>>(new Set());
   const [showSource, setShowSource] = useState(false);
-  const [activePrompt, setActivePrompt] = useState<string | null>(null);
-
-  const {products} = useLoaderData<typeof loader>();
-
-  const gp = useCallback(
-    (title: string): ProductRef => {
-      const found = products.find((p) => p.title === title);
-      return found ?? {id: 'placeholder', title, price: 0, image: '', description: '', variantId: ''};
-    },
-    [products],
-  );
-
-  const SCRIPTS = useMemo(() => buildScripts(gp), [gp]);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
   const flowEndRef = useRef<HTMLDivElement>(null);
-  const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
-
-  // Scroll automatique
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({behavior: 'smooth'});
-  }, [messages, isTyping]);
-
-  useEffect(() => {
-    flowEndRef.current?.scrollIntoView({behavior: 'smooth'});
-  }, [flowLog]);
+  const agentMessageCreatedRef = useRef(false);
+  const pendingProductsRef = useRef<ProductRef[] | undefined>(undefined);
 
   const addFlowEntry = useCallback((entry: Omit<FlowEntry, 'id'>) => {
     const id = `${Date.now()}-${Math.random()}`;
@@ -534,124 +500,107 @@ export default function PersonalShopperPage() {
         return next;
       });
     }, 600);
+    flowEndRef.current?.scrollIntoView({behavior: 'smooth'});
   }, []);
 
-  const processPrompt = useCallback((key: string) => {
-    const script = SCRIPTS[key];
-    if (!script || activePrompt) return;
+  const sendMessage = useCallback(
+    async (message: string) => {
+      if (isLoading) return;
 
-    // Annuler les timeouts en cours
-    timeoutsRef.current.forEach(clearTimeout);
-    timeoutsRef.current = [];
+      setIsLoading(true);
+      setIsTyping(true);
+      setInput('');
+      setFlowLog([]);
+      agentMessageCreatedRef.current = false;
+      pendingProductsRef.current = undefined;
 
-    setActivePrompt(key);
-    setFlowLog([]);
-    setIsTyping(true);
+      const agentId = `agent-${Date.now()}`;
 
-    // Ajouter le message utilisateur
-    const userMsg: Message = {
-      id: `user-${Date.now()}`,
-      role: 'user',
-      content: script.userMessage,
-      timestamp: new Date(),
-    };
-    setMessages((prev) => [...prev, userMsg]);
+      setMessages((prev) => [
+        ...prev,
+        {id: `user-${Date.now()}`, role: 'user', content: message, timestamp: new Date()},
+        {id: agentId, role: 'agent', content: '', timestamp: new Date()},
+      ]);
 
-    // Streamer les entrées du flow technique
-    script.flowEntries.forEach(({delay, direction, label, detail}) => {
-      const t = setTimeout(() => {
-        const ts = new Date().toLocaleTimeString('fr-FR', {
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({message}),
         });
-        addFlowEntry({timestamp: ts, direction, label, detail});
-      }, delay);
-      timeoutsRef.current.push(t);
-    });
 
-    // Réponse de l'agent
-    const agentTimeout = setTimeout(() => {
-      const agentMsg: Message = {
-        id: `agent-${Date.now()}`,
-        role: 'agent',
-        content: script.agentContent,
-        looks: script.looks,
-        products: script.products,
-        contextNote: script.contextNote,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, agentMsg]);
-      setIsTyping(false);
-      setActivePrompt(null);
-    }, script.agentResponseDelay);
-    timeoutsRef.current.push(agentTimeout);
-  }, [activePrompt, addFlowEntry]);
+        if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`);
 
-  const handleSend = useCallback(async () => {
-    if (!input.trim() || activePrompt) return;
-    const query = input.trim();
-    const userMsg: Message = {
-      id: `user-${Date.now()}`,
-      role: 'user',
-      content: query,
-      timestamp: new Date(),
-    };
-    setMessages((prev) => [...prev, userMsg]);
-    setInput('');
-    setIsTyping(true);
-    setFlowLog([]);
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let currentEvent = '';
 
-    try {
-      const results = await searchShopCatalog(
-        {query, limit: 4},
-        (entry) => {
-          addFlowEntry({
-            timestamp: entry.timestamp,
-            direction: entry.direction === 'request' ? '▸' : '◂',
-            label: entry.direction === 'request' ? 'Calling Storefront MCP' : 'MCP Response (200 OK)',
-            detail: JSON.stringify(entry.payload, null, 2).slice(0, 400),
-          });
-        },
-      );
+        while (true) {
+          const {done, value} = await reader.read();
+          if (done) break;
 
-      setIsTyping(false);
+          buffer += decoder.decode(value, {stream: true});
+          const lines = buffer.split('\n');
+          buffer = lines.pop() ?? '';
 
-      if (results.length === 0) {
-        setMessages((prev) => [
-          ...prev,
-          {id: `agent-${Date.now()}`, role: 'agent', content: 'Aucun produit trouvé pour cette recherche. Essayez un autre terme.', timestamp: new Date()},
-        ]);
-        return;
+          for (const line of lines) {
+            if (line.startsWith('event: ')) {
+              currentEvent = line.slice(7).trim();
+            } else if (line.startsWith('data: ')) {
+              let data: Record<string, unknown>;
+              try {
+                data = JSON.parse(line.slice(6)) as Record<string, unknown>;
+              } catch {
+                continue;
+              }
+
+              if (currentEvent === 'text') {
+                const delta = String(data.delta ?? '');
+                if (!agentMessageCreatedRef.current) {
+                  agentMessageCreatedRef.current = true;
+                  setIsTyping(false);
+                }
+                setMessages((prev) =>
+                  prev.map((m) =>
+                    m.id === agentId ? {...m, content: m.content + delta} : m,
+                  ),
+                );
+                chatEndRef.current?.scrollIntoView({behavior: 'smooth'});
+              } else if (currentEvent === 'products') {
+                const products = (data.products as ProductRef[]) ?? [];
+                setMessages((prev) =>
+                  prev.map((m) => (m.id === agentId ? {...m, products} : m)),
+                );
+              } else if (currentEvent === 'log') {
+                addFlowEntry({
+                  timestamp: String(data.timestamp ?? ''),
+                  direction: (data.direction as '▸' | '◂') ?? '▸',
+                  label: String(data.label ?? ''),
+                  detail: data.detail ? String(data.detail) : undefined,
+                });
+              } else if (currentEvent === 'error') {
+                throw new Error(String(data.message ?? 'Erreur inconnue'));
+              }
+            }
+          }
+        }
+      } catch (err) {
+        setIsTyping(false);
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === agentId
+              ? {...m, content: `Erreur : ${String(err)}. Veuillez réessayer.`, products: undefined}
+              : m,
+          ),
+        );
+      } finally {
+        setIsLoading(false);
+        setIsTyping(false);
       }
-
-      const productRefs: ProductRef[] = results.map((r) => ({
-        id: r.id,
-        title: r.title,
-        price: r.price,
-        image: r.image,
-        description: r.description,
-        variantId: r.variantId,
-      }));
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `agent-${Date.now()}`,
-          role: 'agent',
-          content: `J'ai trouvé **${results.length} produit${results.length > 1 ? 's' : ''}** correspondant à votre recherche.`,
-          products: productRefs,
-          timestamp: new Date(),
-        },
-      ]);
-    } catch {
-      setIsTyping(false);
-      setMessages((prev) => [
-        ...prev,
-        {id: `agent-${Date.now()}`, role: 'agent', content: 'Erreur lors de la recherche. Veuillez réessayer.', timestamp: new Date()},
-      ]);
-    }
-  }, [input, activePrompt, addFlowEntry]);
+    },
+    [isLoading, addFlowEntry],
+  );
 
   return (
     <>
@@ -661,12 +610,8 @@ export default function PersonalShopperPage() {
           to   { opacity: 1; transform: translateY(0); }
         }
         .typing-dot {
-          display: inline-block;
-          width: 6px;
-          height: 6px;
-          border-radius: 50%;
-          background: #aaa;
-          margin: 0 2px;
+          display: inline-block; width: 6px; height: 6px;
+          border-radius: 50%; background: #aaa; margin: 0 2px;
           animation: typingPulse 1.2s infinite;
         }
         .typing-dot:nth-child(2) { animation-delay: 0.2s; }
@@ -692,7 +637,7 @@ export default function PersonalShopperPage() {
           overflow: 'hidden',
         }}
       >
-        {/* ── Panneau Chat (gauche 60%) ────────────────────────── */}
+        {/* ── Chat panel (left 60%) ─────────────────────────────────── */}
         <div
           style={{
             width: '60%',
@@ -702,28 +647,64 @@ export default function PersonalShopperPage() {
             borderRight: '1px solid #e8e4de',
           }}
         >
-          {/* En-tête */}
-          <div style={{padding: '24px 32px 16px', borderBottom: '1px solid #e8e4de', flexShrink: 0}}>
-            <div style={{fontFamily: 'Georgia, "Times New Roman", serif', fontSize: '22px', fontWeight: 400, color: '#1A1A1A', letterSpacing: '0.02em'}}>
+          {/* Header */}
+          <div
+            style={{
+              padding: '24px 32px 16px',
+              borderBottom: '1px solid #e8e4de',
+              flexShrink: 0,
+            }}
+          >
+            <div
+              style={{
+                fontFamily: 'Georgia, "Times New Roman", serif',
+                fontSize: '22px',
+                fontWeight: 400,
+                color: '#1A1A1A',
+                letterSpacing: '0.02em',
+              }}
+            >
               Personal Shopper
             </div>
-            <div style={{fontSize: '11px', color: '#888', letterSpacing: '0.15em', textTransform: 'uppercase', marginTop: '2px'}}>
-              Jacquemus — Powered by Storefront MCP
+            <div
+              style={{
+                fontSize: '11px',
+                color: '#888',
+                letterSpacing: '0.15em',
+                textTransform: 'uppercase',
+                marginTop: '2px',
+              }}
+            >
+              Jacquemus — Claude × Storefront MCP
             </div>
           </div>
 
           {/* Quick prompts */}
-          <div style={{padding: '12px 32px', borderBottom: '1px solid #e8e4de', flexShrink: 0}}>
-            <div style={{fontSize: '10px', color: '#aaa', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '8px'}}>
+          <div
+            style={{
+              padding: '12px 32px',
+              borderBottom: '1px solid #e8e4de',
+              flexShrink: 0,
+            }}
+          >
+            <div
+              style={{
+                fontSize: '10px',
+                color: '#aaa',
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                marginBottom: '8px',
+              }}
+            >
               Quick prompts
             </div>
             <div style={{display: 'flex', flexDirection: 'column', gap: '6px'}}>
-              {Object.entries(SCRIPTS).map(([key, script]) => (
+              {QUICK_PROMPTS.map((prompt) => (
                 <button
-                  key={key}
+                  key={prompt}
                   className="quick-btn"
-                  disabled={!!activePrompt}
-                  onClick={() => processPrompt(key)}
+                  disabled={isLoading}
+                  onClick={() => sendMessage(prompt)}
                   style={{
                     textAlign: 'left',
                     padding: '8px 14px',
@@ -738,81 +719,99 @@ export default function PersonalShopperPage() {
                   }}
                 >
                   <span style={{color: '#bbb', marginRight: '8px'}}>→</span>
-                  {script.label}
+                  {prompt}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Zone de messages */}
-          <div style={{flex: 1, overflowY: 'auto', padding: '24px 32px', display: 'flex', flexDirection: 'column', gap: '16px'}}>
-            {messages.map((msg) => (
-              <div key={msg.id} style={{display: 'flex', flexDirection: 'column', alignItems: msg.role === 'user' ? 'flex-end' : 'flex-start'}}>
-                {/* Bulle de message */}
+          {/* Messages */}
+          <div
+            style={{
+              flex: 1,
+              overflowY: 'auto',
+              padding: '24px 32px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '16px',
+            }}
+          >
+            {messages.map((msg) => {
+              const isEmpty = msg.role === 'agent' && msg.content === '' && !msg.products?.length;
+              return (
                 <div
+                  key={msg.id}
                   style={{
-                    maxWidth: '80%',
-                    padding: '12px 16px',
-                    borderRadius: '2px',
-                    fontSize: '13px',
-                    lineHeight: 1.6,
-                    ...(msg.role === 'user'
-                      ? {background: '#1A1A1A', color: '#FAF7F2'}
-                      : {background: '#fff', color: '#1A1A1A', border: '1px solid #e8e4de'}),
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: msg.role === 'user' ? 'flex-end' : 'flex-start',
                   }}
                 >
-                  {renderMessageContent(msg.content)}
+                  {(isEmpty || msg.content) && (
+                    <div
+                      style={{
+                        maxWidth: '80%',
+                        padding: '12px 16px',
+                        borderRadius: '2px',
+                        fontSize: '13px',
+                        lineHeight: 1.6,
+                        ...(msg.role === 'user'
+                          ? {background: '#1A1A1A', color: '#FAF7F2'}
+                          : {background: '#fff', color: '#1A1A1A', border: '1px solid #e8e4de'}),
+                      }}
+                    >
+                      {isEmpty ? (
+                        <span style={{display: 'flex', gap: '2px', alignItems: 'center'}}>
+                          <span className="typing-dot" />
+                          <span className="typing-dot" />
+                          <span className="typing-dot" />
+                        </span>
+                      ) : (
+                        renderMessageContent(msg.content)
+                      )}
+                    </div>
+                  )}
+
+                  {msg.products && msg.products.length > 0 && (
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: '12px',
+                        marginTop: '12px',
+                        overflowX: 'auto',
+                        width: '100%',
+                        paddingBottom: '4px',
+                      }}
+                    >
+                      {msg.products.map((p) => (
+                        <ProductCard key={p.id} product={p} />
+                      ))}
+                    </div>
+                  )}
                 </div>
-
-                {/* Context note */}
-                {msg.contextNote && (
-                  <div style={{marginTop: '8px', fontSize: '11px', color: '#8B7355', letterSpacing: '0.05em'}}>
-                    {msg.contextNote}
-                  </div>
-                )}
-
-                {/* Looks (prompt mariage) */}
-                {msg.looks && msg.looks.length > 0 && (
-                  <div style={{width: '100%', marginTop: '12px'}}>
-                    {msg.looks.map((look, i) => (
-                      <LookCard key={i} look={look} />
-                    ))}
-                  </div>
-                )}
-
-                {/* Produits simples (prompt fruits + sac) */}
-                {msg.products && msg.products.length > 0 && (
-                  <div style={{display: 'flex', gap: '12px', marginTop: '12px', overflowX: 'auto', width: '100%', paddingBottom: '4px'}}>
-                    {msg.products.map((p) => (
-                      <ProductCard key={p.id} product={p} />
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-
-            {/* Indicateur de frappe */}
-            {isTyping && (
-              <div style={{display: 'flex', alignItems: 'center'}}>
-                <div style={{background: '#fff', border: '1px solid #e8e4de', borderRadius: '2px', padding: '12px 16px', display: 'flex', gap: '2px', alignItems: 'center'}}>
-                  <span className="typing-dot" />
-                  <span className="typing-dot" />
-                  <span className="typing-dot" />
-                </div>
-              </div>
-            )}
+              );
+            })}
             <div ref={chatEndRef} />
           </div>
 
-          {/* Barre de saisie */}
-          <div style={{borderTop: '1px solid #e8e4de', padding: '16px 32px', flexShrink: 0, display: 'flex', gap: '12px', alignItems: 'center'}}>
+          {/* Input bar */}
+          <div
+            style={{
+              borderTop: '1px solid #e8e4de',
+              padding: '16px 32px',
+              flexShrink: 0,
+              display: 'flex',
+              gap: '12px',
+              alignItems: 'center',
+            }}
+          >
             <input
               className="ps-input"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+              onKeyDown={(e) => e.key === 'Enter' && !isLoading && sendMessage(input.trim())}
               placeholder="Que cherchez-vous aujourd'hui ?"
-              disabled={!!activePrompt}
+              disabled={isLoading}
               style={{
                 flex: 1,
                 padding: '10px 0',
@@ -825,8 +824,8 @@ export default function PersonalShopperPage() {
               }}
             />
             <button
-              onClick={handleSend}
-              disabled={!input.trim() || !!activePrompt}
+              onClick={() => sendMessage(input.trim())}
+              disabled={!input.trim() || isLoading}
               style={{
                 padding: '10px 20px',
                 background: '#1A1A1A',
@@ -837,7 +836,7 @@ export default function PersonalShopperPage() {
                 letterSpacing: '0.1em',
                 textTransform: 'uppercase',
                 cursor: 'pointer',
-                opacity: !input.trim() || !!activePrompt ? 0.4 : 1,
+                opacity: !input.trim() || isLoading ? 0.4 : 1,
                 transition: 'opacity 0.15s',
               }}
             >
@@ -846,7 +845,7 @@ export default function PersonalShopperPage() {
           </div>
         </div>
 
-        {/* ── Panneau Technical Flow (droite 40%) ─────────────────── */}
+        {/* ── Technical Flow panel (right 40%) ─────────────────────── */}
         <div
           className="flow-panel"
           style={{
@@ -857,7 +856,6 @@ export default function PersonalShopperPage() {
             color: '#c0c0c0',
           }}
         >
-          {/* En-tête */}
           <div
             style={{
               padding: '18px 16px',
@@ -869,11 +867,21 @@ export default function PersonalShopperPage() {
             }}
           >
             <div>
-              <div style={{fontFamily: 'monospace', fontSize: '11px', color: '#e5e5e5', fontWeight: 600, letterSpacing: '0.05em'}}>
+              <div
+                style={{
+                  fontFamily: 'monospace',
+                  fontSize: '11px',
+                  color: '#e5e5e5',
+                  fontWeight: 600,
+                  letterSpacing: '0.05em',
+                }}
+              >
                 Technical Flow
               </div>
-              <div style={{fontFamily: 'monospace', fontSize: '10px', color: '#555', marginTop: '2px'}}>
-                Storefront MCP — Hydrogen 2026.4
+              <div
+                style={{fontFamily: 'monospace', fontSize: '10px', color: '#555', marginTop: '2px'}}
+              >
+                Claude × Shopify Storefront MCP
               </div>
             </div>
             <button
@@ -888,15 +896,21 @@ export default function PersonalShopperPage() {
                 fontSize: '10px',
                 cursor: 'pointer',
                 letterSpacing: '0.05em',
-                transition: 'border-color 0.15s',
               }}
             >
               {'<>'} View source
             </button>
           </div>
 
-          {/* Légende */}
-          <div style={{padding: '8px 16px', borderBottom: '1px solid #222', display: 'flex', gap: '16px', flexShrink: 0}}>
+          <div
+            style={{
+              padding: '8px 16px',
+              borderBottom: '1px solid #222',
+              display: 'flex',
+              gap: '16px',
+              flexShrink: 0,
+            }}
+          >
             <span style={{fontFamily: 'monospace', fontSize: '10px', color: '#555'}}>
               <span style={{color: '#4ade80'}}>▸</span> Request
             </span>
@@ -905,13 +919,24 @@ export default function PersonalShopperPage() {
             </span>
           </div>
 
-          {/* Entrées de log */}
           <div style={{flex: 1, overflowY: 'auto'}}>
             {flowLog.length === 0 ? (
-              <div style={{padding: '32px 16px', fontFamily: 'monospace', fontSize: '11px', color: '#333', textAlign: 'center', lineHeight: 2}}>
+              <div
+                style={{
+                  padding: '32px 16px',
+                  fontFamily: 'monospace',
+                  fontSize: '11px',
+                  color: '#333',
+                  textAlign: 'center',
+                  lineHeight: 2,
+                }}
+              >
                 En attente d'une interaction...<br />
-                <span style={{color: '#2a2a2a'}}>Cliquez sur un quick-prompt pour</span><br />
-                <span style={{color: '#2a2a2a'}}>visualiser le flux MCP en temps réel</span>
+                <span style={{color: '#2a2a2a'}}>Cliquez sur un quick-prompt pour</span>
+                <br />
+                <span style={{color: '#2a2a2a'}}>
+                  visualiser le flux Claude × MCP en temps réel
+                </span>
               </div>
             ) : (
               flowLog.map((entry) => (
@@ -925,16 +950,27 @@ export default function PersonalShopperPage() {
             <div ref={flowEndRef} />
           </div>
 
-          {/* Footer informatif */}
-          <div style={{padding: '10px 16px', borderTop: '1px solid #222', flexShrink: 0}}>
-            <div style={{fontFamily: 'monospace', fontSize: '9px', color: '#3a3a3a', lineHeight: 1.8}}>
-              inference_attributes: mood · occasion · season · material · color · style
+          <div
+            style={{
+              padding: '10px 16px',
+              borderTop: '1px solid #222',
+              flexShrink: 0,
+            }}
+          >
+            <div
+              style={{
+                fontFamily: 'monospace',
+                fontSize: '9px',
+                color: '#3a3a3a',
+                lineHeight: 1.8,
+              }}
+            >
+              JSON-RPC 2.0 · search_catalog · claude-haiku-4-5 · SSE streaming
             </div>
           </div>
         </div>
       </div>
 
-      {/* Modale code source */}
       {showSource && <SourceModal onClose={() => setShowSource(false)} />}
     </>
   );

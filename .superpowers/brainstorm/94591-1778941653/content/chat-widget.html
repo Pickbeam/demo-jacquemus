@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat Widget — Options</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: #f5f2ed; color: #1a1a1a; padding: 32px 32px 80px; }
+  h1 { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: #999; margin-bottom: 6px; }
+  .subtitle { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+  .sub2 { font-size: 13px; color: #888; margin-bottom: 32px; }
+
+  .cards { display: flex; gap: 20px; flex-wrap: wrap; max-width: 980px; }
+  .card { background: white; border: 2px solid transparent; border-radius: 6px; cursor: pointer; transition: all 0.15s; flex: 1; min-width: 280px; overflow: hidden; }
+  .card:hover { border-color: #ccc; }
+  .card.selected { border-color: #1a1a1a; }
+  .card-label { padding: 14px 18px 12px; border-bottom: 1px solid #f0f0f0; }
+  .letter { display: inline-flex; width: 22px; height: 22px; background: #1a1a1a; color: white; border-radius: 50%; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; margin-right: 8px; }
+  .card-title { font-weight: 600; font-size: 13px; display: inline; }
+  .card-desc { font-size: 11px; color: #999; margin-top: 4px; }
+  .preview { background: #fafaf8; position: relative; height: 280px; overflow: hidden; }
+
+  /* ── Shared page mock ── */
+  .page-mock { position: absolute; inset: 0; }
+  .mock-header { height: 44px; background: white; border-bottom: 1px solid #ebebeb; display: flex; align-items: center; padding: 0 20px; gap: 16px; }
+  .mock-logo { font-size: 11px; font-weight: 900; letter-spacing: 0.05em; text-transform: uppercase; }
+  .mock-nav { display: flex; gap: 12px; font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase; color: #888; margin-left: auto; }
+  .mock-nav .gold { color: #c8a96e; font-weight: 600; }
+  .mock-content { padding: 16px 20px; display: flex; gap: 12px; }
+  .mock-product { background: #ede9e3; border-radius: 2px; flex: 1; height: 100px; }
+
+  /* ── Option A: Floating bubble ── */
+  .bubble { position: absolute; bottom: 20px; right: 20px; width: 52px; height: 52px; background: #1a1a1a; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0,0,0,0.2); cursor: pointer; }
+  .bubble-icon { font-size: 20px; }
+  .bubble-badge { position: absolute; top: -2px; right: -2px; background: #c8a96e; color: white; width: 16px; height: 16px; border-radius: 50%; font-size: 9px; display: flex; align-items: center; justify-content: center; }
+
+  /* ── Option B: Bottom bar ── */
+  .bottom-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 52px; background: #1a1a1a; display: flex; align-items: center; padding: 0 20px; gap: 12px; }
+  .bar-logo { font-size: 9px; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; color: white; }
+  .bar-input { flex: 1; background: rgba(255,255,255,0.1); border: none; border-radius: 2px; height: 30px; padding: 0 12px; font-size: 10px; color: rgba(255,255,255,0.5); letter-spacing: 0.05em; display: flex; align-items: center; }
+  .bar-send { background: #c8a96e; color: white; border: none; padding: 6px 14px; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; border-radius: 1px; cursor: pointer; white-space: nowrap; }
+  .bar-separator { width: 1px; height: 24px; background: rgba(255,255,255,0.1); }
+
+  /* ── Option C: Mini panel open ── */
+  .mini-panel { position: absolute; bottom: 0; right: 16px; width: 220px; background: white; border-radius: 6px 6px 0 0; box-shadow: 0 -4px 24px rgba(0,0,0,0.12); overflow: hidden; }
+  .mini-header { background: #1a1a1a; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; }
+  .mini-title { font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: white; }
+  .mini-gold { color: #c8a96e; }
+  .mini-close { color: rgba(255,255,255,0.4); font-size: 14px; cursor: pointer; }
+  .mini-body { padding: 12px 14px; height: 100px; overflow: hidden; }
+  .mini-msg { background: #f5f2ed; border-radius: 2px; padding: 8px 10px; font-size: 9px; color: #555; line-height: 1.5; margin-bottom: 8px; }
+  .mini-input-row { display: flex; gap: 6px; margin-top: 8px; }
+  .mini-input { flex: 1; border: 1px solid #e8e8e8; border-radius: 2px; height: 26px; padding: 0 8px; font-size: 9px; color: #888; }
+  .mini-btn { background: #1a1a1a; color: white; border: none; padding: 0 10px; font-size: 9px; border-radius: 1px; cursor: pointer; }
+
+  .selected-pill { display: none; background: #1a1a1a; color: white; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 8px; border-radius: 2px; float: right; margin-top: 2px; }
+  .card.selected .selected-pill { display: inline-block; }
+</style>
+</head>
+<body>
+
+<h1>Direction A · Option 3</h1>
+<p class="subtitle">Quel format pour le chat fixe en bas ?</p>
+<p class="sub2">Les 3 options sont visibles sur la maquette ci-dessous. Clique pour sélectionner.</p>
+
+<div class="cards">
+
+  <!-- A: Bubble FAB -->
+  <div class="card" id="opt-a" onclick="pick('a')">
+    <div class="card-label">
+      <span class="letter">A</span><span class="card-title">Bubble flottante</span>
+      <span class="selected-pill">✓ Sélectionné</span>
+      <div class="card-desc">Icône ronde en bas à droite · Click pour ouvrir · Intercom-style</div>
+    </div>
+    <div class="preview">
+      <div class="page-mock">
+        <div class="mock-header">
+          <span class="mock-logo">Jacquemus</span>
+          <div class="mock-nav"><span>Collections</span><span class="gold">Personal Shopper ✦</span><span>Panier (2)</span></div>
+        </div>
+        <div class="mock-content">
+          <div class="mock-product"></div>
+          <div class="mock-product"></div>
+          <div class="mock-product"></div>
+        </div>
+      </div>
+      <div class="bubble">
+        <span class="bubble-icon">✦</span>
+        <div class="bubble-badge">1</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B: Bottom bar -->
+  <div class="card" id="opt-b" onclick="pick('b')">
+    <div class="card-label">
+      <span class="letter">B</span><span class="card-title">Barre persistante en bas</span>
+      <span class="selected-pill">✓ Sélectionné</span>
+      <div class="card-desc">Input toujours visible · Rapide d'accès · Signature de marque</div>
+    </div>
+    <div class="preview">
+      <div class="page-mock">
+        <div class="mock-header">
+          <span class="mock-logo">Jacquemus</span>
+          <div class="mock-nav"><span>Collections</span><span class="gold">Personal Shopper ✦</span><span>Panier (2)</span></div>
+        </div>
+        <div class="mock-content">
+          <div class="mock-product"></div>
+          <div class="mock-product"></div>
+          <div class="mock-product"></div>
+        </div>
+      </div>
+      <div class="bottom-bar">
+        <span class="bar-logo">Personal Shopper ✦</span>
+        <div class="bar-separator"></div>
+        <div class="bar-input">Que cherchez-vous aujourd'hui ?</div>
+        <button class="bar-send">Envoyer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- C: Mini panel -->
+  <div class="card" id="opt-c" onclick="pick('c')">
+    <div class="card-label">
+      <span class="letter">C</span><span class="card-title">Mini panel ancré en bas à droite</span>
+      <span class="selected-pill">✓ Sélectionné</span>
+      <div class="card-desc">Chat compact toujours ouvert · Discret · Résultats inline</div>
+    </div>
+    <div class="preview">
+      <div class="page-mock">
+        <div class="mock-header">
+          <span class="mock-logo">Jacquemus</span>
+          <div class="mock-nav"><span>Collections</span><span class="gold">Personal Shopper ✦</span><span>Panier (2)</span></div>
+        </div>
+        <div class="mock-content">
+          <div class="mock-product"></div>
+          <div class="mock-product"></div>
+          <div class="mock-product"></div>
+        </div>
+      </div>
+      <div class="mini-panel">
+        <div class="mini-header">
+          <span class="mini-title">Personal Shopper <span class="mini-gold">✦</span></span>
+          <span class="mini-close">−</span>
+        </div>
+        <div class="mini-body">
+          <div class="mini-msg">Bonjour, je suis votre styliste personnel Jacquemus. Que puis-je vous trouver ?</div>
+          <div class="mini-input-row">
+            <div class="mini-input">Un sac pour le quotidien…</div>
+            <button class="mini-btn">→</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let cur = null;
+  function pick(id) {
+    if (cur) document.getElementById('opt-' + cur).classList.remove('selected');
+    cur = id;
+    document.getElementById('opt-' + id).classList.add('selected');
+    try { window.parent.postMessage({type:'select',choice:id}, '*'); } catch(e){}
+  }
+</script>
+</body>
+</html>

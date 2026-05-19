@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Navigation — Options</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: #f5f2ed; color: #1a1a1a; padding: 32px; }
+  h1 { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: #999; margin-bottom: 6px; }
+  .subtitle { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+  .sub2 { font-size: 13px; color: #888; margin-bottom: 32px; }
+
+  .options { display: flex; flex-direction: column; gap: 16px; max-width: 960px; }
+  .option { background: white; border: 2px solid transparent; border-radius: 4px; overflow: hidden; cursor: pointer; transition: all 0.15s; }
+  .option:hover { border-color: #ccc; }
+  .option.selected { border-color: #1a1a1a; }
+  .opt-label { padding: 12px 18px 10px; display: flex; align-items: center; gap: 10px; }
+  .letter { width: 24px; height: 24px; background: #1a1a1a; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+  .opt-title { font-weight: 600; font-size: 14px; }
+  .opt-desc { font-size: 11px; color: #999; margin-left: auto; }
+  .mockup { background: white; border-top: 1px solid #f0f0f0; }
+
+  /* ── Shared header shell ── */
+  .hdr { height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; border-bottom: 1px solid #ebebeb; }
+  .logo { height: 18px; }
+  .nav { display: flex; gap: 28px; align-items: center; font-size: 10.5px; letter-spacing: 0.13em; text-transform: uppercase; color: #444; }
+  .ctas { display: flex; gap: 22px; align-items: center; font-size: 10.5px; letter-spacing: 0.13em; text-transform: uppercase; color: #444; }
+
+  /* accent styles */
+  .ps-plain {}
+  .ps-dot::after { content: ' ·'; color: #c8a96e; }
+  .ps-tag { background: #1a1a1a; color: white; padding: 4px 10px; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; border-radius: 1px; }
+  .ps-underline { border-bottom: 1.5px solid #1a1a1a; padding-bottom: 2px; }
+  .ps-gold { color: #c8a96e; font-weight: 600; }
+
+  .cart-dot { background: #1a1a1a; color: white; width: 17px; height: 17px; border-radius: 50%; font-size: 9px; display: inline-flex; align-items: center; justify-content: center; margin-left: 3px; vertical-align: middle; }
+
+  /* footer preview */
+  .ftr { background: #1a1a1a; color: white; padding: 28px 40px; display: flex; justify-content: space-between; align-items: center; }
+  .ftr-logo { height: 16px; filter: invert(1); }
+  .ftr-links { display: flex; gap: 28px; font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.45); }
+  .ftr-copy { font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+
+  .hero { height: 60px; background: linear-gradient(135deg,#f7f4f0,#ede9e3); display: flex; align-items: center; justify-content: center; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #bbb; }
+
+  .selected-pill { display: none; }
+  .option.selected .selected-pill { display: inline-block; background: #1a1a1a; color: white; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 8px; border-radius: 2px; margin-left: 8px; }
+</style>
+</head>
+<body>
+
+<h1>Direction A — Blanc éditorial</h1>
+<p class="subtitle">Comment mettre en valeur le Personal Shopper dans la nav ?</p>
+<p class="sub2">Le logo Jacquemus est utilisé dans chaque option. Choisis le traitement du lien "Personal Shopper".</p>
+
+<div class="options">
+
+  <!-- A1: nav item classique, pas de mise en valeur -->
+  <div class="option" id="opt-a1" onclick="pick('a1')">
+    <div class="opt-label">
+      <div class="letter">1</div>
+      <div class="opt-title">Nav standard — Personal Shopper comme les autres liens</div>
+      <div class="opt-desc">Discret · Uniforme</div>
+      <span class="selected-pill">Sélectionné</span>
+    </div>
+    <div class="mockup">
+      <div class="hdr">
+        <img class="logo" src="jacquemus-logo.png" alt="JACQUEMUS">
+        <nav class="nav">
+          <span>Collections</span>
+          <span class="ps-plain">Personal Shopper</span>
+          <span>À propos</span>
+        </nav>
+        <div class="ctas">
+          <span>Recherche</span>
+          <span>Compte</span>
+          <span>Panier <span class="cart-dot">2</span></span>
+        </div>
+      </div>
+      <div class="hero">Collection SS25 — Disponible maintenant</div>
+      <div class="ftr">
+        <img class="ftr-logo" src="jacquemus-logo.png" alt="JACQUEMUS">
+        <div class="ftr-links">
+          <span>Confidentialité</span><span>Remboursements</span><span>Expédition</span><span>CGV</span>
+        </div>
+        <span class="ftr-copy">© 2025</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- A2: tag noir accent -->
+  <div class="option" id="opt-a2" onclick="pick('a2')">
+    <div class="opt-label">
+      <div class="letter">2</div>
+      <div class="opt-title">Tag pill noir — Personal Shopper accentué</div>
+      <div class="opt-desc">Visible · Moderne · IA mise en avant</div>
+      <span class="selected-pill">Sélectionné</span>
+    </div>
+    <div class="mockup">
+      <div class="hdr">
+        <img class="logo" src="jacquemus-logo.png" alt="JACQUEMUS">
+        <nav class="nav">
+          <span>Collections</span>
+          <span class="ps-tag">Personal Shopper</span>
+          <span>À propos</span>
+        </nav>
+        <div class="ctas">
+          <span>Recherche</span>
+          <span>Compte</span>
+          <span>Panier <span class="cart-dot">2</span></span>
+        </div>
+      </div>
+      <div class="hero">Collection SS25 — Disponible maintenant</div>
+      <div class="ftr">
+        <img class="ftr-logo" src="jacquemus-logo.png" alt="JACQUEMUS">
+        <div class="ftr-links">
+          <span>Confidentialité</span><span>Remboursements</span><span>Expédition</span><span>CGV</span>
+        </div>
+        <span class="ftr-copy">© 2025</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- A3: couleur dorée -->
+  <div class="option" id="opt-a3" onclick="pick('a3')">
+    <div class="opt-label">
+      <div class="letter">3</div>
+      <div class="opt-title">Accent doré — Personal Shopper en or</div>
+      <div class="opt-desc">Luxueux · Exclusif · Subtil</div>
+      <span class="selected-pill">Sélectionné</span>
+    </div>
+    <div class="mockup">
+      <div class="hdr">
+        <img class="logo" src="jacquemus-logo.png" alt="JACQUEMUS">
+        <nav class="nav">
+          <span>Collections</span>
+          <span class="ps-gold">Personal Shopper ✦</span>
+          <span>À propos</span>
+        </nav>
+        <div class="ctas">
+          <span>Recherche</span>
+          <span>Compte</span>
+          <span>Panier <span class="cart-dot">2</span></span>
+        </div>
+      </div>
+      <div class="hero">Collection SS25 — Disponible maintenant</div>
+      <div class="ftr">
+        <img class="ftr-logo" src="jacquemus-logo.png" alt="JACQUEMUS">
+        <div class="ftr-links">
+          <span>Confidentialité</span><span>Remboursements</span><span>Expédition</span><span>CGV</span>
+        </div>
+        <span class="ftr-copy">© 2025</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let cur = null;
+  function pick(id) {
+    if (cur) document.getElementById('opt-' + cur).classList.remove('selected');
+    cur = id;
+    document.getElementById('opt-' + id).classList.add('selected');
+    try { window.parent.postMessage({type:'select',choice:id}, '*'); } catch(e){}
+  }
+</script>
+</body>
+</html>

@@ -1,28 +1,7 @@
 import {writeFileSync} from 'fs';
 
-interface ShopifyVariant {
-  id: number;
-  price: string;
-  option1: string | null; // size
-}
-
-interface ShopifyImage {
-  src: string;
-}
-
-interface ShopifyProduct {
-  id: number;
-  title: string;
-  body_html: string;
-  product_type: string;
-  tags: string;
-  images: ShopifyImage[];
-  variants: ShopifyVariant[];
-}
-
-interface ShopifyProductsResponse {
-  products: ShopifyProduct[];
-}
+const FIRECRAWL_API_KEY = process.env.FIRECRAWL_API_KEY ?? '';
+const USD_TO_EUR = 0.93;
 
 interface ScrapedProduct {
   title: string;
@@ -35,106 +14,183 @@ interface ScrapedProduct {
   tags: string[];
 }
 
-const BASE = 'https://www.jacquemus.com';
-
-const COLLECTIONS: Array<{handle: string; category: ScrapedProduct['category']}> = [
-  {handle: 'bags', category: 'bag'},
-  {handle: 'dresses', category: 'dress'},
-  {handle: 'shoes', category: 'shoes'},
+// Seed URLs discovered from search — one per product style
+const SEED_URLS: Array<{url: string; category: ScrapedProduct['category']}> = [
+  // Bags
+  {url: 'https://www.farfetch.com/shopping/women/jacquemus-le-chiquito-moyen-tote-bag-item-18697074.aspx', category: 'bag'},
+  {url: 'https://www.farfetch.com/shopping/women/jacquemus-le-chiquito-noeud-bag-item-31557068.aspx', category: 'bag'},
+  {url: 'https://www.farfetch.com/shopping/women/jacquemus-large-bambino-tote-bag-item-29884590.aspx', category: 'bag'},
+  {url: 'https://www.farfetch.com/shopping/women/jacquemus-le-bambino-woven-mini-tote-bag-item-33418062.aspx', category: 'bag'},
+  // Dresses
+  {url: 'https://www.farfetch.com/shopping/women/jacquemus-la-robe-saudade-draped-mini-dress-item-19571106.aspx', category: 'dress'},
+  {url: 'https://www.farfetch.com/shopping/women/jacquemus-la-robe-peplo-maxi-dress-item-23760628.aspx', category: 'dress'},
+  // Shoes
+  {url: 'https://www.farfetch.com/shopping/women/jacquemus-cubisto-heeled-sandals-item-32426176.aspx', category: 'shoes'},
 ];
 
+// Additional search queries to discover more products
+const EXTRA_SEARCHES: Array<{query: string; category: ScrapedProduct['category']}> = [
+  {query: 'jacquemus bambino mini bag farfetch shopping women item', category: 'bag'},
+  {query: 'jacquemus mikado grand bambino bag farfetch shopping women item', category: 'bag'},
+  {query: 'jacquemus turismo rond carre bag farfetch shopping women item', category: 'bag'},
+  {query: 'jacquemus la robe riviera dress farfetch shopping women item', category: 'dress'},
+  {query: 'jacquemus la robe drapeado notte dress farfetch shopping women item', category: 'dress'},
+  {query: 'jacquemus mules bisou sandales farfetch shopping women item', category: 'shoes'},
+  {query: 'jacquemus ballerines slingbacks duelo farfetch shopping women item', category: 'shoes'},
+];
+
+const CATEGORY_LIMITS: Record<ScrapedProduct['category'], number> = {bag: 8, dress: 6, shoes: 5};
+
 const INFERENCE_TAGS: Record<string, string[]> = {
-  // Bags
-  chiquito:  ['mood:chic', 'mood:minimalist', 'occasion:evening', 'occasion:day', 'season:all-season', 'style:mini'],
-  bambino:   ['mood:chic', 'mood:romantic', 'occasion:wedding', 'occasion:day', 'season:spring', 'season:summer'],
-  citron:    ['mood:playful', 'mood:summery', 'occasion:beach', 'occasion:vacation', 'season:summer', 'collection:saint-tropez-2024', 'collection:limited-edition'],
-  banane:    ['mood:playful', 'mood:summery', 'occasion:beach', 'occasion:vacation', 'season:summer', 'collection:saint-tropez-2024', 'collection:limited-edition'],
-  tomate:    ['mood:playful', 'mood:bold', 'occasion:cocktail', 'occasion:vacation', 'season:summer', 'collection:saint-tropez-2024', 'collection:limited-edition'],
-  grand:     ['mood:minimalist', 'mood:versatile', 'occasion:everyday', 'occasion:office', 'season:all-season'],
-  cabas:     ['mood:minimalist', 'occasion:everyday', 'season:all-season'],
-  // Dresses
-  bomba:     ['mood:romantic', 'mood:summery', 'occasion:wedding', 'occasion:garden_party', 'season:summer', 'material:linen', 'fit:loose'],
-  souffle:   ['mood:sensual', 'mood:romantic', 'occasion:wedding', 'occasion:cocktail', 'season:summer', 'material:cotton'],
-  riviera:   ['mood:sophisticated', 'mood:elegant', 'occasion:wedding', 'occasion:cocktail', 'season:summer', 'material:silk'],
-  // Shoes
-  pralu:     ['mood:playful', 'mood:summery', 'occasion:wedding', 'occasion:vacation', 'season:summer', 'style:platform'],
-  classique: ['mood:minimalist', 'mood:chic', 'occasion:wedding', 'occasion:everyday', 'season:all-season', 'style:mule'],
-  espadrille:['mood:summery', 'mood:casual', 'occasion:vacation', 'occasion:day', 'season:summer'],
+  chiquito:    ['mood:chic', 'mood:minimalist', 'occasion:evening', 'occasion:day', 'season:all-season', 'style:mini'],
+  bambino:     ['mood:chic', 'mood:romantic', 'occasion:wedding', 'occasion:day', 'season:spring', 'season:summer'],
+  bambimou:    ['mood:chic', 'mood:romantic', 'occasion:evening', 'occasion:day', 'season:all-season', 'style:mini'],
+  mikado:      ['mood:minimalist', 'mood:chic', 'occasion:everyday', 'season:all-season'],
+  turismo:     ['mood:casual', 'mood:versatile', 'occasion:everyday', 'occasion:travel', 'season:all-season'],
+  'rond':      ['mood:playful', 'mood:chic', 'occasion:evening', 'occasion:day', 'season:all-season', 'style:mini'],
+  bisou:       ['mood:romantic', 'mood:feminine', 'occasion:evening', 'occasion:cocktail', 'season:spring', 'season:summer'],
+  riviera:     ['mood:sophisticated', 'mood:elegant', 'occasion:wedding', 'occasion:cocktail', 'season:summer', 'material:silk'],
+  drapeado:    ['mood:sensual', 'mood:elegant', 'occasion:cocktail', 'occasion:evening', 'season:spring', 'season:summer'],
+  saudade:     ['mood:romantic', 'mood:bohemian', 'occasion:wedding', 'occasion:day', 'season:spring', 'season:summer'],
+  peplo:       ['mood:feminine', 'mood:elegant', 'occasion:cocktail', 'occasion:evening', 'season:spring', 'season:summer'],
+  notte:       ['mood:sophisticated', 'mood:elegant', 'occasion:evening', 'occasion:cocktail', 'season:all-season'],
+  mules:       ['mood:chic', 'mood:minimalist', 'occasion:everyday', 'occasion:day', 'season:all-season', 'style:mule'],
+  sandal:      ['mood:summery', 'mood:chic', 'occasion:vacation', 'occasion:day', 'season:summer', 'style:sandal'],
+  ballerine:   ['mood:feminine', 'mood:chic', 'occasion:everyday', 'occasion:cocktail', 'season:all-season', 'style:flat'],
+  cubisto:     ['mood:bold', 'mood:playful', 'occasion:cocktail', 'occasion:evening', 'season:spring', 'season:summer'],
+  slingback:   ['mood:sophisticated', 'mood:elegant', 'occasion:wedding', 'occasion:cocktail', 'season:spring', 'season:summer'],
 };
 
 function inferTags(title: string, category: ScrapedProduct['category']): string[] {
-  const lower = title.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const lower = title.toLowerCase();
   const tags: string[] = [`category:${category}`];
-
   for (const [key, keyTags] of Object.entries(INFERENCE_TAGS)) {
-    if (lower.includes(key)) {
-      tags.push(...keyTags);
-      break;
-    }
+    if (lower.includes(key)) { tags.push(...keyTags); break; }
   }
-
-  // Default tags if no specific match
   if (tags.length === 1) {
     if (category === 'bag') tags.push('mood:chic', 'occasion:day', 'season:all-season');
     if (category === 'dress') tags.push('mood:elegant', 'occasion:day', 'season:summer');
     if (category === 'shoes') tags.push('mood:chic', 'occasion:day', 'season:all-season');
   }
-
   return [...new Set(tags)];
 }
 
-function stripHtml(html: string): string {
-  return html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+async function searchForUrls(
+  query: string,
+  category: ScrapedProduct['category'],
+): Promise<Array<{url: string; category: ScrapedProduct['category']}>> {
+  const res = await fetch('https://api.firecrawl.dev/v1/search', {
+    method: 'POST',
+    headers: {Authorization: `Bearer ${FIRECRAWL_API_KEY}`, 'Content-Type': 'application/json'},
+    body: JSON.stringify({query, limit: 10}),
+  });
+  const data = (await res.json()) as {data?: Array<{url: string}>};
+  return (data.data ?? [])
+    .filter((r) => /-item-\d+\.aspx$/.test(r.url) && r.url.includes('farfetch.com'))
+    .slice(0, 3)
+    .map((r) => ({url: r.url, category}));
 }
 
-async function fetchCollection(handle: string): Promise<ShopifyProduct[]> {
-  const url = `${BASE}/collections/${handle}/products.json?limit=50`;
-  console.log(`Fetching ${url}...`);
-
-  const res = await fetch(url, {
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-      Accept: 'application/json',
-    },
+async function scrapeProduct(
+  url: string,
+  category: ScrapedProduct['category'],
+): Promise<ScrapedProduct | null> {
+  const res = await fetch('https://api.firecrawl.dev/v1/scrape', {
+    method: 'POST',
+    headers: {Authorization: `Bearer ${FIRECRAWL_API_KEY}`, 'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      url,
+      formats: ['extract'],
+      extract: {
+        schema: {
+          type: 'object',
+          properties: {
+            title: {type: 'string', description: 'Product name'},
+            price: {type: 'number', description: 'Price as number e.g. 590'},
+            currency: {type: 'string', description: 'Currency code e.g. USD'},
+            description: {type: 'string', description: 'Product description'},
+            images: {type: 'array', items: {type: 'string'}, description: 'Product image URLs'},
+            sizes: {type: 'array', items: {type: 'string'}, description: 'Available sizes'},
+          },
+          required: ['title', 'price'],
+        },
+      },
+    }),
   });
 
-  if (!res.ok) {
-    console.warn(`  ⚠ ${handle}: HTTP ${res.status} — skipping`);
-    return [];
-  }
+  if (!res.ok) return null;
+  const data = (await res.json()) as {data?: {extract?: Record<string, unknown>}};
+  const ext = data.data?.extract;
+  if (!ext?.title || !ext.price || Number(ext.price) === 0) return null;
 
-  const data = (await res.json()) as ShopifyProductsResponse;
-  console.log(`  ✓ ${data.products.length} products`);
-  return data.products;
+  const currency = String(ext.currency ?? 'USD');
+  const rawPrice = Number(ext.price);
+  const priceEur =
+    currency === 'EUR' ? rawPrice
+    : currency === 'GBP' ? Math.round(rawPrice * 1.18)
+    : Math.round(rawPrice * USD_TO_EUR);
+
+  const images = (ext.images as string[] ?? [])
+    .filter((img) => img.startsWith('https://cdn-images.farfetch-contents.com'))
+    .slice(0, 3);
+
+  const title = String(ext.title).replace(/\s+\|.*$/, '').trim();
+
+  return {
+    title,
+    description: String(ext.description ?? '').slice(0, 300),
+    price: priceEur,
+    currency: 'EUR',
+    category,
+    images,
+    sizes: (ext.sizes as string[] ?? []).filter((s) => s !== 'OS'),
+    tags: inferTags(title, category),
+  };
 }
 
+function sleep(ms: number) { return new Promise((r) => setTimeout(r, ms)); }
+
 async function main() {
-  const allProducts: ScrapedProduct[] = [];
+  if (!FIRECRAWL_API_KEY) { console.error('FIRECRAWL_API_KEY is not set'); process.exit(1); }
 
-  for (const {handle, category} of COLLECTIONS) {
-    const products = await fetchCollection(handle);
+  const counts: Record<ScrapedProduct['category'], number> = {bag: 0, dress: 0, shoes: 0};
+  const seenUrls = new Set<string>();
+  const products: ScrapedProduct[] = [];
 
-    for (const p of products) {
-      const price = parseFloat(p.variants[0]?.price ?? '0');
-      const sizes = p.variants
-        .map((v) => v.option1)
-        .filter((s): s is string => s !== null && s !== 'Default Title');
+  // Collect all candidate URLs
+  const allCandidates: Array<{url: string; category: ScrapedProduct['category']}> = [...SEED_URLS];
 
-      allProducts.push({
-        title: p.title,
-        description: stripHtml(p.body_html).slice(0, 200),
-        price,
-        currency: 'EUR',
-        category,
-        images: p.images.map((i) => i.src).slice(0, 3),
-        sizes,
-        tags: inferTags(p.title, category),
-      });
-    }
+  console.log('Searching for additional product URLs...');
+  for (const {query, category} of EXTRA_SEARCHES) {
+    if (counts[category] >= CATEGORY_LIMITS[category]) continue;
+    const found = await searchForUrls(query, category);
+    console.log(`  "${query.slice(0, 50)}" → ${found.length} URLs`);
+    allCandidates.push(...found);
+    await sleep(300);
   }
 
-  writeFileSync('scripts/jacquemus-products.json', JSON.stringify(allProducts, null, 2));
-  console.log(`\n✓ Wrote ${allProducts.length} products to scripts/jacquemus-products.json`);
+  console.log(`\nScraping ${allCandidates.length} candidates...`);
+  for (const {url, category} of allCandidates) {
+    if (counts[category] >= CATEGORY_LIMITS[category]) continue;
+    if (seenUrls.has(url)) continue;
+    seenUrls.add(url);
+
+    console.log(`[${category}] ${url.split('/').pop()}`);
+    const product = await scrapeProduct(url, category);
+    if (product) {
+      products.push(product);
+      counts[category]++;
+      console.log(`  ✓ ${product.title} — €${product.price}`);
+    } else {
+      console.log(`  ✗ skipped`);
+    }
+    await sleep(400);
+  }
+
+  if (products.length === 0) { console.error('No products scraped'); process.exit(1); }
+
+  writeFileSync('scripts/jacquemus-products.json', JSON.stringify(products, null, 2));
+  console.log(`\n✓ ${products.length} products (${counts.bag} bags, ${counts.dress} dresses, ${counts.shoes} shoes)`);
 }
 
 main().catch(console.error);

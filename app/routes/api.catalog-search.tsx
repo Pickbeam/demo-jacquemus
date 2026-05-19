@@ -26,21 +26,21 @@ function buildShopifyQuery(payload: CatalogSearchPayload): string {
   const parts: string[] = [];
   const f = payload.filters ?? {};
 
+  // Tags containing colons must be quoted in Shopify's query syntax
   if (f.category?.length) {
-    parts.push(f.category.map((c) => `tag:category:${c}`).join(' OR '));
+    parts.push(`(${f.category.map((c) => `tag:"category:${c}"`).join(' OR ')})`);
   }
   if (f.occasion?.length) {
-    parts.push(`(${f.occasion.map((o) => `tag:occasion:${o}`).join(' OR ')})`);
+    parts.push(`(${f.occasion.map((o) => `tag:"occasion:${o}"`).join(' OR ')})`);
   }
   if (f.mood?.length) {
-    parts.push(`(${f.mood.map((m) => `tag:mood:${m}`).join(' OR ')})`);
+    parts.push(`(${f.mood.map((m) => `tag:"mood:${m}"`).join(' OR ')})`);
   }
   if (f.price_max) {
     parts.push(`variants.price:<=${f.price_max}`);
   }
-  // Free-text search
   if (payload.query) {
-    parts.push(`title:*${payload.query}* OR tag:*${payload.query.split(' ')[0]}*`);
+    parts.push(`title:*${payload.query}*`);
   }
 
   return parts.join(' AND ') || 'available_for_sale:true';

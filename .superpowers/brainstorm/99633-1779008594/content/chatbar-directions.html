@@ -1,0 +1,94 @@
+<h2>Quelle direction pour la barre flottante ?</h2>
+<p class="subtitle">3 directions — même structure, traitement visuel différent. Clique pour sélectionner.</p>
+
+<div class="cards">
+
+  <!-- Option A : Ivoire -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#FAF7F2;padding:24px 20px;border-bottom:1px solid #ede8e0;">
+      <div style="
+        background:#FFF8F0;
+        border-radius:12px;
+        height:56px;
+        display:flex;
+        align-items:center;
+        padding:0 18px;
+        gap:14px;
+        box-shadow:0 4px 24px rgba(180,150,100,0.12), 0 1px 6px rgba(0,0,0,0.06);
+        border:1px solid #e8e0d0;
+      ">
+        <span style="font-size:7px;font-weight:400;letter-spacing:0.22em;text-transform:uppercase;color:#c8a96e;white-space:nowrap;flex-shrink:0;">Personal Shopper ✦</span>
+        <div style="width:1px;height:18px;background:#ddd8ce;flex-shrink:0;"></div>
+        <div style="flex:1;background:#f2ede5;border:1px solid #ddd8ce;border-radius:7px;height:34px;display:flex;align-items:center;padding:0 12px;">
+          <span style="font-size:11px;color:#bbb;letter-spacing:0.02em;">Que cherchez-vous aujourd'hui ?</span>
+        </div>
+        <div style="background:#1a1a1a;color:#fff;padding:0 18px;height:34px;border-radius:7px;display:flex;align-items:center;font-size:8px;letter-spacing:0.16em;text-transform:uppercase;">Envoyer</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Ivoire</h3>
+      <p>Fond crème chaud <code>#FFF8F0</code>, ombre dorée subtile, bordure sable. Bouton noir pour le contraste. Très éditorial Jacquemus, s'intègre en douceur.</p>
+    </div>
+  </div>
+
+  <!-- Option B : Blanc avec glow doré -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#F0EDE8;padding:24px 20px;border-bottom:1px solid #ede8e0;">
+      <div style="
+        background:white;
+        border-radius:12px;
+        height:56px;
+        display:flex;
+        align-items:center;
+        padding:0 18px;
+        gap:14px;
+        box-shadow:0 0 0 1.5px #c8a96e, 0 8px 32px rgba(200,169,110,0.18), 0 2px 8px rgba(0,0,0,0.08);
+      ">
+        <span style="font-size:7px;font-weight:400;letter-spacing:0.22em;text-transform:uppercase;color:#c8a96e;white-space:nowrap;flex-shrink:0;">Personal Shopper ✦</span>
+        <div style="width:1px;height:18px;background:#eee;flex-shrink:0;"></div>
+        <div style="flex:1;background:#fafafa;border:1px solid #ebebeb;border-radius:7px;height:34px;display:flex;align-items:center;padding:0 12px;">
+          <span style="font-size:11px;color:#bbb;letter-spacing:0.02em;">Que cherchez-vous aujourd'hui ?</span>
+        </div>
+        <div style="background:#c8a96e;color:#fff;padding:0 18px;height:34px;border-radius:7px;display:flex;align-items:center;font-size:8px;letter-spacing:0.16em;text-transform:uppercase;">Envoyer</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Blanc + contour doré</h3>
+      <p>Fond blanc, fine bordure dorée <code>#c8a96e</code> comme un trait de bijou. Glow ambré en ombre. Bouton or plein. Très visible, très luxe.</p>
+    </div>
+  </div>
+
+  <!-- Option C : Frosted glass sable -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:linear-gradient(135deg,#2a1f12 0%,#1a1a1a 100%);padding:24px 20px;border-bottom:1px solid #ede8e0;position:relative;">
+      <!-- fake page background for glass effect context -->
+      <div style="
+        background:rgba(245,239,228,0.88);
+        backdrop-filter:blur(16px);
+        -webkit-backdrop-filter:blur(16px);
+        border-radius:12px;
+        height:56px;
+        display:flex;
+        align-items:center;
+        padding:0 18px;
+        gap:14px;
+        box-shadow:0 8px 32px rgba(0,0,0,0.18), 0 1px 0 rgba(255,255,255,0.5) inset;
+        border:1px solid rgba(255,255,255,0.55);
+      ">
+        <span style="font-size:7px;font-weight:400;letter-spacing:0.22em;text-transform:uppercase;color:#a0763a;white-space:nowrap;flex-shrink:0;">Personal Shopper ✦</span>
+        <div style="width:1px;height:18px;background:rgba(0,0,0,0.12);flex-shrink:0;"></div>
+        <div style="flex:1;background:rgba(255,255,255,0.35);border:1px solid rgba(255,255,255,0.4);border-radius:7px;height:34px;display:flex;align-items:center;padding:0 12px;">
+          <span style="font-size:11px;color:rgba(80,60,30,0.5);letter-spacing:0.02em;">Que cherchez-vous aujourd'hui ?</span>
+        </div>
+        <div style="background:#1a1a1a;color:#fff;padding:0 18px;height:34px;border-radius:7px;display:flex;align-items:center;font-size:8px;letter-spacing:0.16em;text-transform:uppercase;">Envoyer</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Frosted glass sable</h3>
+      <p>Verre dépoli chaud <code>rgba(245,239,228,0.88)</code> avec blur. S'adapte à tout fond de page, très premium. Lisible sur clair comme sur sombre.</p>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top:16px;font-size:11px;">💡 Les aperçus sont sur fond neutre — A sur crème, B sur sable, C simulé sur fond sombre pour montrer l'effet glass.</p>

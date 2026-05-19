@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design Direction — Header/Footer</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: #f5f5f0; color: #1a1a1a; padding: 32px; }
+  h1 { font-size: 13px; letter-spacing: 0.15em; text-transform: uppercase; color: #888; margin-bottom: 8px; }
+  .subtitle { font-size: 22px; font-weight: 600; margin-bottom: 36px; color: #1a1a1a; }
+  .options { display: flex; flex-direction: column; gap: 20px; max-width: 900px; }
+  .option { background: white; border: 2px solid transparent; border-radius: 4px; overflow: hidden; cursor: pointer; transition: all 0.2s; }
+  .option:hover { border-color: #ccc; }
+  .option.selected { border-color: #1a1a1a; }
+  .option-label { padding: 14px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #f0f0f0; }
+  .option-letter { width: 28px; height: 28px; background: #1a1a1a; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .option-title { font-weight: 600; font-size: 15px; }
+  .option-desc { font-size: 12px; color: #888; margin-left: auto; }
+  .mockup-wrap { padding: 20px; background: #fafafa; }
+
+  /* ── Option A: Transparent / editorial ── */
+  .header-a { background: white; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; height: 56px; border-bottom: 1px solid #e8e8e8; }
+  .logo-a { font-size: 18px; font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; }
+  .nav-a { display: flex; gap: 28px; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #444; }
+  .ctas-a { display: flex; gap: 20px; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #444; align-items: center; }
+  .cart-badge-a { background: #1a1a1a; color: white; width: 18px; height: 18px; border-radius: 50%; font-size: 10px; display: inline-flex; align-items: center; justify-content: center; margin-left: 4px; }
+
+  /* ── Option B: Full black ── */
+  .header-b { background: #1a1a1a; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; height: 56px; }
+  .logo-b { font-size: 18px; font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; color: white; }
+  .nav-b { display: flex; gap: 28px; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.65); }
+  .ctas-b { display: flex; gap: 20px; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.65); align-items: center; }
+  .cart-badge-b { background: white; color: #1a1a1a; width: 18px; height: 18px; border-radius: 50%; font-size: 10px; display: inline-flex; align-items: center; justify-content: center; margin-left: 4px; }
+
+  /* ── Option C: Transparent sticky ── */
+  .header-c { background: white; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; height: 64px; border-bottom: 1px solid transparent; }
+  .logo-c { font-size: 22px; font-weight: 900; letter-spacing: 0.04em; text-transform: uppercase; }
+  .nav-c { position: absolute; left: 50%; transform: translateX(-50%); display: flex; gap: 32px; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #333; }
+  .ctas-c { display: flex; gap: 24px; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #333; align-items: center; }
+
+  .hero-strip { height: 80px; background: linear-gradient(135deg, #f0ede8 0%, #e8e4de 100%); display: flex; align-items: center; justify-content: center; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: #888; }
+
+  /* footers */
+  .footer-a { background: #1a1a1a; color: white; padding: 40px; display: flex; justify-content: space-between; align-items: flex-start; margin-top: 16px; }
+  .footer-logo-a { font-size: 22px; font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; }
+  .footer-links-a { display: flex; gap: 32px; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.5); align-items: center; }
+  .footer-copy-a { font-size: 10px; letter-spacing: 0.08em; color: rgba(255,255,255,0.35); text-transform: uppercase; margin-top: 4px; }
+
+  .footer-b { background: white; border-top: 1px solid #e8e8e8; color: #1a1a1a; padding: 40px; display: flex; justify-content: space-between; align-items: flex-start; margin-top: 16px; }
+  .footer-logo-b { font-size: 22px; font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; }
+  .footer-links-b { display: flex; gap: 32px; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #888; align-items: center; }
+
+  .footer-c { background: #f5f2ed; border-top: 1px solid #e8e4de; padding: 48px 40px 32px; margin-top: 16px; }
+  .footer-c-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; }
+  .footer-logo-c { font-size: 28px; font-weight: 900; letter-spacing: 0.04em; text-transform: uppercase; }
+  .footer-cols { display: flex; gap: 48px; }
+  .footer-col-title { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #888; margin-bottom: 12px; }
+  .footer-col-link { font-size: 12px; color: #444; display: block; margin-bottom: 8px; }
+  .footer-c-bottom { border-top: 1px solid #e0ddd8; padding-top: 20px; display: flex; justify-content: space-between; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #aaa; }
+
+  .shopper-tag { background: #1a1a1a; color: white; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 10px; border-radius: 2px; }
+  .shopper-tag-outline { border: 1px solid #1a1a1a; color: #1a1a1a; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 10px; border-radius: 2px; }
+
+  .selected-indicator { position: fixed; bottom: 20px; right: 20px; background: #1a1a1a; color: white; padding: 8px 16px; border-radius: 4px; font-size: 12px; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+  .selected-indicator.visible { opacity: 1; }
+</style>
+</head>
+<body>
+
+<h1>Direction Design — Header & Footer</h1>
+<p class="subtitle">Quelle direction pour le site Jacquemus ?</p>
+
+<div class="options">
+
+  <!-- Option A -->
+  <div class="option" id="opt-a" onclick="select('a')">
+    <div class="option-label">
+      <div class="option-letter">A</div>
+      <div class="option-title">Blanc editorial — jacquemus.com fidèle</div>
+      <div class="option-desc">Header blanc + footer noir · Minimaliste · Élégant</div>
+    </div>
+    <div class="mockup-wrap">
+      <!-- Header A -->
+      <div class="header-a">
+        <span class="logo-a">Jacquemus</span>
+        <nav class="nav-a">
+          <span>Collections</span>
+          <span>Personal Shopper ✦</span>
+          <span>À propos</span>
+        </nav>
+        <div class="ctas-a">
+          <span>Recherche</span>
+          <span>Compte</span>
+          <span>Panier <span class="cart-badge-a">2</span></span>
+        </div>
+      </div>
+      <div class="hero-strip">— Collection SS25 —</div>
+      <!-- Footer A -->
+      <div class="footer-a">
+        <div>
+          <div class="footer-logo-a">Jacquemus</div>
+          <div class="footer-copy-a">© 2025 Jacquemus</div>
+        </div>
+        <div class="footer-links-a">
+          <span>Politique de confidentialité</span>
+          <span>Remboursements</span>
+          <span>Expédition</span>
+          <span>CGV</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option B -->
+  <div class="option" id="opt-b" onclick="select('b')">
+    <div class="option-label">
+      <div class="option-letter">B</div>
+      <div class="option-title">Full noir — Luxe sombre</div>
+      <div class="option-desc">Header noir + footer blanc · Contrasté · Premium</div>
+    </div>
+    <div class="mockup-wrap">
+      <div class="header-b">
+        <span class="logo-b">Jacquemus</span>
+        <nav class="nav-b">
+          <span>Collections</span>
+          <span>Personal Shopper ✦</span>
+          <span>À propos</span>
+        </nav>
+        <div class="ctas-b">
+          <span>Recherche</span>
+          <span>Compte</span>
+          <span>Panier <span class="cart-badge-b">2</span></span>
+        </div>
+      </div>
+      <div class="hero-strip">— Collection SS25 —</div>
+      <div class="footer-b">
+        <div>
+          <div class="footer-logo-b">Jacquemus</div>
+          <div style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:#aaa;margin-top:4px;">© 2025 Jacquemus</div>
+        </div>
+        <div class="footer-links-b">
+          <span>Politique de confidentialité</span>
+          <span>Remboursements</span>
+          <span>Expédition</span>
+          <span>CGV</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option C -->
+  <div class="option" id="opt-c" onclick="select('c')">
+    <div class="option-label">
+      <div class="option-letter">C</div>
+      <div class="option-title">Éditorial étendu — Footer riche</div>
+      <div class="option-desc">Header blanc + footer crème structuré · Colonnes · Complet</div>
+    </div>
+    <div class="mockup-wrap">
+      <div style="position:relative;">
+        <div class="header-c">
+          <span class="logo-c">Jacquemus</span>
+          <nav class="nav-c">
+            <span>Collections</span>
+            <span>Personal Shopper ✦</span>
+            <span>À propos</span>
+          </nav>
+          <div class="ctas-c">
+            <span>Recherche</span>
+            <span>Compte</span>
+            <span>Panier (2)</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-strip">— Collection SS25 —</div>
+      <div class="footer-c">
+        <div class="footer-c-top">
+          <div class="footer-logo-c">Jacquemus</div>
+          <div class="footer-cols">
+            <div>
+              <div class="footer-col-title">Navigation</div>
+              <span class="footer-col-link">Collections</span>
+              <span class="footer-col-link">Personal Shopper ✦</span>
+              <span class="footer-col-link">À propos</span>
+            </div>
+            <div>
+              <div class="footer-col-title">Service client</div>
+              <span class="footer-col-link">Expédition</span>
+              <span class="footer-col-link">Remboursements</span>
+              <span class="footer-col-link">Contact</span>
+            </div>
+            <div>
+              <div class="footer-col-title">Légal</div>
+              <span class="footer-col-link">Confidentialité</span>
+              <span class="footer-col-link">CGV</span>
+            </div>
+          </div>
+        </div>
+        <div class="footer-c-bottom">
+          <span>© 2025 Jacquemus. Tous droits réservés.</span>
+          <span>Paris, France</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="selected-indicator" id="indicator">✓ Sélectionné</div>
+
+<script>
+  let current = null;
+  function select(id) {
+    if (current) document.getElementById('opt-' + current).classList.remove('selected');
+    current = id;
+    document.getElementById('opt-' + id).classList.add('selected');
+    const ind = document.getElementById('indicator');
+    ind.textContent = '✓ Option ' + id.toUpperCase() + ' sélectionnée';
+    ind.classList.add('visible');
+    setTimeout(() => ind.classList.remove('visible'), 2000);
+    // Post to parent if in iframe
+    try { window.parent.postMessage({type:'select',choice:id}, '*'); } catch(e){}
+  }
+</script>
+</body>
+</html>

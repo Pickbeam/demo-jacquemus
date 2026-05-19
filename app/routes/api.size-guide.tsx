@@ -45,7 +45,7 @@ export async function action({request, context}: Route.ActionArgs) {
   const client = new Anthropic({apiKey: anthropicKey});
 
   const msg = await client.messages.create({
-    model: 'claude-haiku-4-5-20251001',
+    model: 'claude-sonnet-4-6',
     max_tokens: 120,
     system: SIZING_PROMPT,
     messages: [

@@ -1,14 +1,18 @@
 [
   {
-    "title": "Le Chiquito Noir",
-    "description": "The iconic Jacquemus micro bag in sleek black leather. A minimalist silhouette with a structured shape, magnetic closure and adjustable strap.",
-    "price": 590,
+    "title": "Jacquemus Le Chiquito Moyen tote bag",
+    "description": "Jacquemus updates its iconic Le Chiquito bag in a lilac purple hue. Designed in a structured trapeze silhouette, this style is simply adorned with the brand's gold-tone logo lettering to the front.",
+    "price": 767,
     "currency": "EUR",
     "category": "bag",
     "images": [
-      "https://picsum.photos/seed/chiquito-noir/400/500"
+      "https://cdn-images.farfetch-contents.com/18/69/70/74/18697074_40469849_1000.jpg",
+      "https://cdn-images.farfetch-contents.com/18/69/70/74/18697074_40469849_300.jpg",
+      "https://cdn-images.farfetch-contents.com/18/69/70/74/18697074_40442884_300.jpg"
     ],
-    "sizes": [],
+    "sizes": [
+      "One Size"
+    ],
     "tags": [
       "category:bag",
       "mood:chic",
@@ -20,224 +24,411 @@
     ]
   },
   {
-    "title": "Le Bambino Noir Verni",
-    "description": "The Bambino bag in patent black leather. A romantic mini bag with a curved top handle and gold hardware, perfect for evenings.",
+    "title": "Jacquemus Le Chiquito Noeud bag",
+    "description": "The Jacquemus Le Chiquito Noeud bag features a white calf leather exterior, a top handle, logo lettering, a flap top, and a magnetic closure. Imported.",
+    "price": 559,
+    "currency": "EUR",
+    "category": "bag",
+    "images": [
+      "https://cdn-images.farfetch-contents.com/31/55/70/68/31557068_60990204_1000.jpg",
+      "https://cdn-images.farfetch-contents.com/31/55/70/68/31557068_60990204_300.jpg",
+      "https://cdn-images.farfetch-contents.com/31/55/70/68/31557068_60990198_300.jpg"
+    ],
+    "sizes": [
+      "One Size"
+    ],
+    "tags": [
+      "category:bag",
+      "mood:chic",
+      "mood:minimalist",
+      "occasion:evening",
+      "occasion:day",
+      "season:all-season",
+      "style:mini"
+    ]
+  },
+  {
+    "title": "Jacquemus large Bambino tote bag",
+    "description": "Black foldover top tote bag with magnetic fastening, single top handle, detachable shoulder strap, and gold-tone logo lettering. Made in Italy.",
+    "price": 741,
+    "currency": "EUR",
+    "category": "bag",
+    "images": [
+      "https://cdn-images.farfetch-contents.com/29/88/45/90/29884590_59797248_1000.jpg",
+      "https://cdn-images.farfetch-contents.com/29/88/45/90/29884590_59797248_300.jpg",
+      "https://cdn-images.farfetch-contents.com/29/88/45/90/29884590_59850662_300.jpg"
+    ],
+    "sizes": [
+      "One Size"
+    ],
+    "tags": [
+      "category:bag",
+      "mood:chic",
+      "mood:romantic",
+      "occasion:wedding",
+      "occasion:day",
+      "season:spring",
+      "season:summer"
+    ]
+  },
+  {
+    "title": "Jacquemus Le Bambino woven mini tote bag",
+    "description": "Light pink mini tote bag with a top handle, silver-tone logo plaque, woven design, detachable and adjustable strap, and top flap. Comes with a protective dust bag. Made in Italy.",
+    "price": 1003,
+    "currency": "EUR",
+    "category": "bag",
+    "images": [
+      "https://cdn-images.farfetch-contents.com/33/41/80/62/33418062_64445681_1000.jpg",
+      "https://cdn-images.farfetch-contents.com/33/41/80/62/33418062_64445681_300.jpg",
+      "https://cdn-images.farfetch-contents.com/33/41/80/62/33418062_64553514_300.jpg"
+    ],
+    "sizes": [
+      "One Size"
+    ],
+    "tags": [
+      "category:bag",
+      "mood:chic",
+      "mood:romantic",
+      "occasion:wedding",
+      "occasion:day",
+      "season:spring",
+      "season:summer"
+    ]
+  },
+  {
+    "title": "Jacquemus La Robe Saudade draped mini dress",
+    "description": "With an all-pink hue, the Saudade dress can be found in Jacquemus' SS22 collection. The draped design and asymmetric hem reflect the brand's innovative approach to fashion. Highlights include a cowl neck, backless spaghetti straps, and an asymmetric hem.",
+    "price": 800,
+    "currency": "EUR",
+    "category": "dress",
+    "images": [
+      "https://cdn-images.farfetch-contents.com/19/57/11/06/19571106_43753835_1000.jpg",
+      "https://cdn-images.farfetch-contents.com/19/57/11/06/19571106_43753835_300.jpg",
+      "https://cdn-images.farfetch-contents.com/19/57/11/06/19571106_43753833_300.jpg"
+    ],
+    "sizes": [],
+    "tags": [
+      "category:dress",
+      "mood:romantic",
+      "mood:bohemian",
+      "occasion:wedding",
+      "occasion:day",
+      "season:spring",
+      "season:summer"
+    ]
+  },
+  {
+    "title": "Jacquemus Cubisto heeled sandals",
+    "description": "Red heeled sandals with a slip-on style and pointed toe. Features a branded insole and comes complete with a protective dust bag. Made in Italy.",
+    "price": 654,
+    "currency": "EUR",
+    "category": "shoes",
+    "images": [
+      "https://cdn-images.farfetch-contents.com/32/42/61/76/32426176_64557752_1000.jpg",
+      "https://cdn-images.farfetch-contents.com/32/42/61/76/32426176_64557752_300.jpg",
+      "https://cdn-images.farfetch-contents.com/32/42/61/76/32426176_64340783_300.jpg"
+    ],
+    "sizes": [],
+    "tags": [
+      "category:shoes",
+      "mood:summery",
+      "mood:chic",
+      "occasion:vacation",
+      "occasion:day",
+      "season:summer",
+      "style:sandal"
+    ]
+  },
+  {
+    "title": "Jacquemus Le Bambino leather tote bag",
+    "description": "A stylish beige tote made from calf suede with a gold-tone logo lettering, featuring a single rounded top handle, an adjustable detachable shoulder strap, foldover top with magnetic fastening, a main compartment, and rear card slots. Made in Italy.",
+    "price": 818,
+    "currency": "EUR",
+    "category": "bag",
+    "images": [
+      "https://cdn-images.farfetch-contents.com/18/77/20/56/18772056_40774530_1000.jpg",
+      "https://cdn-images.farfetch-contents.com/18/77/20/56/18772056_40774530_300.jpg",
+      "https://cdn-images.farfetch-contents.com/18/77/20/56/18772056_40744960_300.jpg"
+    ],
+    "sizes": [
+      "One Size"
+    ],
+    "tags": [
+      "category:bag",
+      "mood:chic",
+      "mood:romantic",
+      "occasion:wedding",
+      "occasion:day",
+      "season:spring",
+      "season:summer"
+    ]
+  },
+  {
+    "title": "Jacquemus Le Grand Bambino tote bag",
+    "description": "A larger iteration of one of their signature styles, Jacquemus' Le Grand Bambino amplifies the brand's penchant for minimal, structured handbags. Crafted from smooth leather with a flat top handle, the bag features a removable shoulder strap so it can be worn across the body. The instantly recognisa",
+    "price": 765,
+    "currency": "EUR",
+    "category": "bag",
+    "images": [
+      "https://cdn-images.farfetch-contents.com/17/58/52/19/17585219_36764942_1000.jpg",
+      "https://cdn-images.farfetch-contents.com/17/58/52/19/17585219_36764942_300.jpg",
+      "https://cdn-images.farfetch-contents.com/17/58/52/19/17585219_36743995_300.jpg"
+    ],
+    "sizes": [
+      "One Size"
+    ],
+    "tags": [
+      "category:bag",
+      "mood:chic",
+      "mood:romantic",
+      "occasion:wedding",
+      "occasion:day",
+      "season:spring",
+      "season:summer"
+    ]
+  },
+  {
+    "title": "Jacquemus Le Grand Bambino shoulder-bag",
+    "description": "Brown calf leather shoulder bag with logo plaque, adjustable shoulder strap, single top handle, concealed magnetic fastening, rear patch pocket, and internal logo patch.",
+    "price": 915,
+    "currency": "EUR",
+    "category": "bag",
+    "images": [
+      "https://cdn-images.farfetch-contents.com/19/79/45/84/19794584_44492995_1000.jpg",
+      "https://cdn-images.farfetch-contents.com/19/79/45/84/19794584_44492995_300.jpg",
+      "https://cdn-images.farfetch-contents.com/19/79/45/84/19794584_44492985_300.jpg"
+    ],
+    "sizes": [
+      "One size"
+    ],
+    "tags": [
+      "category:bag",
+      "mood:chic",
+      "mood:romantic",
+      "occasion:wedding",
+      "occasion:day",
+      "season:spring",
+      "season:summer"
+    ]
+  },
+  {
+    "title": "Jacquemus Le Grand Bambino tote bag",
+    "description": "A larger iteration of one of their signature styles, Jacquemus' Le Bambino amplifies the brand's penchant for minimal, structured handbags. Crafted from smooth calf leather with a flat top handle, the bag features a removable shoulder strap so it can be worn across the body. The instantly recognisab",
+    "price": 860,
+    "currency": "EUR",
+    "category": "bag",
+    "images": [
+      "https://cdn-images.farfetch-contents.com/18/69/56/29/18695629_40440699_1000.jpg",
+      "https://cdn-images.farfetch-contents.com/18/69/56/29/18695629_40440709_300.jpg",
+      "https://cdn-images.farfetch-contents.com/18/69/56/29/18695629_40440707_300.jpg"
+    ],
+    "sizes": [
+      "One Size"
+    ],
+    "tags": [
+      "category:bag",
+      "mood:chic",
+      "mood:romantic",
+      "occasion:wedding",
+      "occasion:day",
+      "season:spring",
+      "season:summer"
+    ]
+  },
+  {
+    "title": "Jacquemus La Robe slip dress",
+    "description": "Sleek and minimalistic, this satin slip dress by Jacquemus is imagined in a timeless off-white hue. It's detailed with an alluring side slit and gold-tone logo plaque on the rear strap.",
+    "price": 458,
+    "currency": "EUR",
+    "category": "dress",
+    "images": [
+      "https://cdn-images.farfetch-contents.com/22/53/30/41/22533041_52514848_1000.jpg",
+      "https://cdn-images.farfetch-contents.com/22/53/30/41/22533041_52514848_300.jpg",
+      "https://cdn-images.farfetch-contents.com/22/53/30/41/22533041_52514856_300.jpg"
+    ],
+    "sizes": [
+      "Not specified"
+    ],
+    "tags": [
+      "category:dress",
+      "mood:elegant",
+      "occasion:day",
+      "season:summer"
+    ]
+  },
+  {
+    "title": "Jacquemus La Robe midi dress",
+    "description": "The Jacquemus La Robe midi dress features a sleeveless design with gathered detailing, crafted from a composition of 97% viscose and 3% elastane.",
     "price": 650,
     "currency": "EUR",
-    "category": "bag",
+    "category": "dress",
     "images": [
-      "https://picsum.photos/seed/bambino-verni/400/500"
+      "https://cdn-images.farfetch-contents.com/29/85/50/14/29855014_60771860_1000.jpg",
+      "https://cdn-images.farfetch-contents.com/29/85/50/14/29855014_60771860_300.jpg",
+      "https://cdn-images.farfetch-contents.com/29/85/50/14/29855014_60759023_300.jpg"
     ],
     "sizes": [],
     "tags": [
-      "category:bag",
-      "mood:chic",
-      "mood:romantic",
-      "occasion:wedding",
+      "category:dress",
+      "mood:elegant",
       "occasion:day",
-      "season:spring",
       "season:summer"
     ]
   },
   {
-    "title": "Le Bambino Large",
-    "description": "The Bambino Large in smooth leather. A generous version of the iconic Bambino with a curved top handle and detachable shoulder strap.",
-    "price": 720,
+    "title": "Jacquemus La robe Raphia fringed dress",
+    "description": "Debuting on Jacquemus' SS23 runway, the La robe Raphia dress is defined by its cut-out waist and open back that's held together by a leather cord. The light beige cotton canvas construction is complete with raffia fringing at the bust and hem. Imported.",
+    "price": 1270,
     "currency": "EUR",
-    "category": "bag",
+    "category": "dress",
     "images": [
-      "https://picsum.photos/seed/bambino-large/400/500"
+      "https://cdn-images.farfetch-contents.com/19/85/78/91/19857891_54804742_1000.jpg",
+      "https://cdn-images.farfetch-contents.com/19/85/78/91/19857891_54804742_300.jpg",
+      "https://cdn-images.farfetch-contents.com/19/85/78/91/19857891_54804724_300.jpg"
     ],
     "sizes": [],
     "tags": [
-      "category:bag",
-      "mood:chic",
-      "mood:romantic",
-      "occasion:wedding",
+      "category:dress",
+      "mood:elegant",
       "occasion:day",
-      "season:spring",
       "season:summer"
     ]
   },
   {
-    "title": "Le Citron",
-    "description": "The playful lemon-shaped bag from the Saint-Tropez 2024 collection. A limited-edition sculptural mini bag in yellow leather.",
-    "price": 490,
-    "currency": "EUR",
-    "category": "bag",
-    "images": [
-      "https://picsum.photos/seed/le-citron/400/500"
-    ],
-    "sizes": [],
-    "tags": [
-      "category:bag",
-      "mood:playful",
-      "mood:summery",
-      "occasion:beach",
-      "occasion:vacation",
-      "season:summer",
-      "collection:saint-tropez-2024",
-      "collection:limited-edition"
-    ]
-  },
-  {
-    "title": "Le Banane",
-    "description": "The banana-shaped bag from the Saint-Tropez 2024 collection. A whimsical limited-edition piece in yellow leather with a long chain strap.",
-    "price": 490,
-    "currency": "EUR",
-    "category": "bag",
-    "images": [
-      "https://picsum.photos/seed/le-banane/400/500"
-    ],
-    "sizes": [],
-    "tags": [
-      "category:bag",
-      "mood:playful",
-      "mood:summery",
-      "occasion:beach",
-      "occasion:vacation",
-      "season:summer",
-      "collection:saint-tropez-2024",
-      "collection:limited-edition"
-    ]
-  },
-  {
-    "title": "Le Tomate",
-    "description": "The tomato-shaped bag from the Saint-Tropez 2024 collection. A bold sculptural mini bag in red leather, a statement piece for summer.",
-    "price": 490,
-    "currency": "EUR",
-    "category": "bag",
-    "images": [
-      "https://picsum.photos/seed/le-tomate/400/500"
-    ],
-    "sizes": [],
-    "tags": [
-      "category:bag",
-      "mood:playful",
-      "mood:bold",
-      "occasion:cocktail",
-      "occasion:vacation",
-      "season:summer",
-      "collection:saint-tropez-2024",
-      "collection:limited-edition"
-    ]
-  },
-  {
-    "title": "Le Cabas Noir",
-    "description": "The minimalist everyday tote in black leather. Generous proportions for daily essentials with a clean, structured silhouette.",
-    "price": 850,
-    "currency": "EUR",
-    "category": "bag",
-    "images": [
-      "https://picsum.photos/seed/cabas-noir/400/500"
-    ],
-    "sizes": [],
-    "tags": [
-      "category:bag",
-      "mood:minimalist",
-      "occasion:everyday",
-      "season:all-season"
-    ]
-  },
-  {
-    "title": "La Bomba",
-    "description": "A romantic and airy midi dress in flowy linen. Loose silhouette with a draped neckline and flutter sleeves, perfect for garden parties.",
-    "price": 690,
+    "title": "Jacquemus La Robe Notte slip dress",
+    "description": "Jacquemus’ midi dress is modelled on classic slip styles. It’s crafted from black stretch satin and adorned with a cut-out strap at the back anchored with a gold-tone logo plaque. Highlights include a lace trim, spaghetti straps, and a side zip fastening, designed in a slip silhouette with a side sl",
+    "price": 551,
     "currency": "EUR",
     "category": "dress",
     "images": [
-      "https://picsum.photos/seed/la-bomba/400/600"
+      "https://cdn-images.farfetch-contents.com/22/53/17/51/22531751_52513481_1000.jpg",
+      "https://cdn-images.farfetch-contents.com/22/53/17/51/22531751_52513481_300.jpg",
+      "https://cdn-images.farfetch-contents.com/22/53/17/51/22531751_52513486_300.jpg"
     ],
-    "sizes": ["34", "36", "38", "40", "42"],
-    "tags": [
-      "category:dress",
-      "mood:romantic",
-      "mood:summery",
-      "occasion:wedding",
-      "occasion:garden_party",
-      "season:summer",
-      "material:linen",
-      "fit:loose"
-    ]
-  },
-  {
-    "title": "Le Souffle",
-    "description": "A sensual and romantic dress in cotton voile. A lightweight puff-sleeve silhouette with an open back for a dreamy summer look.",
-    "price": 750,
-    "currency": "EUR",
-    "category": "dress",
-    "images": [
-      "https://picsum.photos/seed/le-souffle/400/600"
+    "sizes": [
+      "Available in multiple sizes"
     ],
-    "sizes": ["34", "36", "38", "40", "42"],
-    "tags": [
-      "category:dress",
-      "mood:sensual",
-      "mood:romantic",
-      "occasion:wedding",
-      "occasion:cocktail",
-      "season:summer",
-      "material:cotton"
-    ]
-  },
-  {
-    "title": "La Riviera",
-    "description": "An elegant slip dress in silk satin. A sophisticated column silhouette with spaghetti straps and a subtle side slit.",
-    "price": 890,
-    "currency": "EUR",
-    "category": "dress",
-    "images": [
-      "https://picsum.photos/seed/la-riviera/400/600"
-    ],
-    "sizes": ["34", "36", "38", "40", "42"],
     "tags": [
       "category:dress",
       "mood:sophisticated",
       "mood:elegant",
+      "occasion:evening",
+      "occasion:cocktail",
+      "season:all-season"
+    ]
+  },
+  {
+    "title": "Jacquemus The Drapeado midi dress",
+    "description": "Black stretch-design midi dress with asymmetric neck, twist detailing, off-shoulder style, single short sleeve, ruched detailing, draped detailing, and straight hem.",
+    "price": 737,
+    "currency": "EUR",
+    "category": "dress",
+    "images": [
+      "https://cdn-images.farfetch-contents.com/23/77/20/02/23772002_54065545_1000.jpg",
+      "https://cdn-images.farfetch-contents.com/23/77/20/02/23772002_54065545_300.jpg",
+      "https://cdn-images.farfetch-contents.com/23/77/20/02/23772002_54065530_300.jpg"
+    ],
+    "sizes": [],
+    "tags": [
+      "category:dress",
+      "mood:sensual",
+      "mood:elegant",
+      "occasion:cocktail",
+      "occasion:evening",
+      "season:spring",
+      "season:summer"
+    ]
+  },
+  {
+    "title": "Jacquemus 100mm Les Bisou mules",
+    "description": "Highlights include sesame beige color, slip-on style, snakeskin effect, high sculpted heel, and branded footbed. Made in Italy.",
+    "price": 644,
+    "currency": "EUR",
+    "category": "shoes",
+    "images": [
+      "https://cdn-images.farfetch-contents.com/27/37/15/38/27371538_58033035_1000.jpg",
+      "https://cdn-images.farfetch-contents.com/27/37/15/38/27371538_58033035_300.jpg",
+      "https://cdn-images.farfetch-contents.com/27/37/15/38/27371538_58032747_300.jpg"
+    ],
+    "sizes": [
+      "Select size"
+    ],
+    "tags": [
+      "category:shoes",
+      "mood:romantic",
+      "mood:feminine",
+      "occasion:evening",
+      "occasion:cocktail",
+      "season:spring",
+      "season:summer"
+    ]
+  },
+  {
+    "title": "Jacquemus 90mm Les Bisou sandals",
+    "description": "Black calf leather sandals featuring a smooth grain, buckle-fastening ankle strap, high sculpted heel, asymmetric design, slingback strap, single toe strap, round open toe, branded footbed, and leather sole. Made in Italy.",
+    "price": 559,
+    "currency": "EUR",
+    "category": "shoes",
+    "images": [
+      "https://cdn-images.farfetch-contents.com/24/13/03/10/24130310_54996899_1000.jpg",
+      "https://cdn-images.farfetch-contents.com/24/13/03/10/24130310_54996899_300.jpg",
+      "https://cdn-images.farfetch-contents.com/24/13/03/10/24130310_54996871_300.jpg"
+    ],
+    "sizes": [],
+    "tags": [
+      "category:shoes",
+      "mood:romantic",
+      "mood:feminine",
+      "occasion:evening",
+      "occasion:cocktail",
+      "season:spring",
+      "season:summer"
+    ]
+  },
+  {
+    "title": "Jacquemus Les Slingback Duelo Plates ballerina shoes",
+    "description": "Indigo blue cotton denim ballerina shoes with circular patch detail, logo-engraved gold-tone hardware, pointed toe, buckle-fastening slingback strap, leather lining, branded footbed, and flat sole. Made in Italy.",
+    "price": 1050,
+    "currency": "EUR",
+    "category": "shoes",
+    "images": [
+      "https://cdn-images.farfetch-contents.com/22/16/44/31/22164431_52942122_1000.jpg",
+      "https://cdn-images.farfetch-contents.com/22/16/44/31/22164431_52942122_300.jpg",
+      "https://cdn-images.farfetch-contents.com/22/16/44/31/22164431_52942142_300.jpg"
+    ],
+    "sizes": [],
+    "tags": [
+      "category:shoes",
+      "mood:sophisticated",
+      "mood:elegant",
       "occasion:wedding",
       "occasion:cocktail",
-      "season:summer",
-      "material:silk"
+      "season:spring",
+      "season:summer"
     ]
   },
   {
-    "title": "Les Pralu",
-    "description": "The iconic platform mules with a wooden sole and leather upper. A statement shoe with a playful platform heel and open-toe design.",
-    "price": 690,
+    "title": "Jacquemus Les Slingbacks Duelo leather ballerina shoes",
+    "description": "Black calf leather ballerina shoes with smooth grain, pointed toe, geometric panelled design, buckle-fastening slingback strap, stacked sole, branded leather insole, and moulded footbed. Made in Italy.",
+    "price": 650,
     "currency": "EUR",
     "category": "shoes",
     "images": [
-      "https://picsum.photos/seed/les-pralu/400/400"
+      "https://cdn-images.farfetch-contents.com/22/77/54/86/22775486_52807605_1000.jpg",
+      "https://cdn-images.farfetch-contents.com/22/77/54/86/22775486_52807605_300.jpg",
+      "https://cdn-images.farfetch-contents.com/22/77/54/86/22775486_52807599_300.jpg"
     ],
-    "sizes": ["35", "36", "37", "38", "39", "40", "41"],
+    "sizes": [
+      "Available in different sizes as per selection."
+    ],
     "tags": [
       "category:shoes",
-      "mood:playful",
-      "mood:summery",
+      "mood:sophisticated",
+      "mood:elegant",
       "occasion:wedding",
-      "occasion:vacation",
-      "season:summer",
-      "style:platform"
-    ]
-  },
-  {
-    "title": "Les Classiques",
-    "description": "The minimalist leather mule with a clean square toe and block heel. A versatile everyday shoe with a chic understated aesthetic.",
-    "price": 590,
-    "currency": "EUR",
-    "category": "shoes",
-    "images": [
-      "https://picsum.photos/seed/les-classiques/400/400"
-    ],
-    "sizes": ["35", "36", "37", "38", "39", "40", "41"],
-    "tags": [
-      "category:shoes",
-      "mood:minimalist",
-      "mood:chic",
-      "occasion:wedding",
-      "occasion:everyday",
-      "season:all-season",
-      "style:mule"
+      "occasion:cocktail",
+      "season:spring",
+      "season:summer"
     ]
   }
 ]

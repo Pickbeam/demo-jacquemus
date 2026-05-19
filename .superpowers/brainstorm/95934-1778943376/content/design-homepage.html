@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home Page — Design Jacquemus</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background: #fff;
+    color: #000;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    height: 56px;
+    background: transparent;
+    transition: background 0.3s ease;
+  }
+  .header.scrolled { background: #fff; border-bottom: 1px solid #f0f0f0; }
+
+  .header-logo {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    font-weight: 300;
+    color: #fff;
+    transition: color 0.3s;
+  }
+  .header.scrolled .header-logo { color: #000; }
+
+  .header-nav {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+  }
+  .header-nav a {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    font-weight: 300;
+    transition: color 0.3s;
+  }
+  .header.scrolled .header-nav a { color: #444; }
+  .header-nav a:hover { color: #000; }
+
+  .header-ctas {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+  }
+  .header-ctas a {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    font-weight: 300;
+    transition: color 0.3s;
+  }
+  .header.scrolled .header-ctas a { color: #444; }
+
+  /* ── HERO ── */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: 100vh;
+    min-height: 600px;
+  }
+
+  /* Colonne gauche : image campagne */
+  .hero-left {
+    position: relative;
+    overflow: hidden;
+    background: #1a1a1a;
+  }
+  .hero-left-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    /* Simulé par un dégradé */
+    background: linear-gradient(160deg, #2a2a2a 0%, #1a1a1a 40%, #0a0a0a 100%);
+  }
+  .hero-left-label {
+    position: absolute;
+    top: 72px;
+    left: 32px;
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    font-weight: 300;
+  }
+  .hero-left-content {
+    position: absolute;
+    bottom: 40px;
+    left: 32px;
+    right: 32px;
+  }
+  .hero-left-title {
+    font-size: clamp(36px, 4.5vw, 64px);
+    font-weight: 200;
+    color: #fff;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    margin-bottom: 20px;
+  }
+  .hero-left-cta {
+    display: inline-block;
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    text-decoration: none;
+    font-weight: 300;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    padding-bottom: 4px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .hero-left-cta:hover { color: #fff; border-color: #fff; }
+
+  /* Colonne droite : produit star */
+  .hero-right {
+    position: relative;
+    overflow: hidden;
+    background: #f7f5f2;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .hero-right-image {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #f0ede8 0%, #e8e3dc 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #c0b8ae;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  .hero-right-content {
+    position: absolute;
+    bottom: 40px;
+    left: 32px;
+    right: 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .hero-right-name {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #000;
+    font-weight: 300;
+    margin-bottom: 4px;
+  }
+  .hero-right-price {
+    font-size: 11px;
+    color: #888;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+  }
+  .hero-right-add {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #000;
+    text-decoration: none;
+    border-bottom: 1px solid #000;
+    padding-bottom: 3px;
+    font-weight: 300;
+  }
+
+  /* ── SECTION NOUVEAUTÉS ── */
+  .nouveautes {
+    padding: 80px 40px;
+  }
+  .nouveautes-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 48px;
+  }
+  .nouveautes-title {
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    font-weight: 300;
+    color: #000;
+  }
+  .nouveautes-link {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #999;
+    text-decoration: none;
+    font-weight: 300;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 2px;
+  }
+  .nouveautes-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+  }
+  .product-card {
+    background: #f7f5f2;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+  }
+  .product-card-image {
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    background: linear-gradient(160deg, #eceae6 0%, #e0ddd8 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #c0b8ae;
+    font-size: 8px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    transition: transform 0.5s ease;
+  }
+  .product-card:hover .product-card-image { transform: scale(1.03); }
+  .product-card-body {
+    padding: 14px 16px 20px;
+    background: #fff;
+  }
+  .product-card-name {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #000;
+    font-weight: 300;
+    margin-bottom: 4px;
+  }
+  .product-card-price {
+    font-size: 10px;
+    color: #999;
+    font-weight: 300;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: #000;
+    padding: 32px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-logo {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #fff;
+    font-weight: 300;
+  }
+  .footer-copy {
+    font-size: 8px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.2);
+  }
+
+  /* ── ANNOTATIONS ── */
+  .annotation {
+    position: absolute;
+    background: rgba(255, 220, 0, 0.9);
+    color: #000;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 2px;
+    pointer-events: none;
+    font-family: monospace;
+    letter-spacing: 0;
+    text-transform: none;
+    white-space: nowrap;
+  }
+
+  /* scroll simulation */
+  html { scroll-behavior: smooth; }
+
+  .note {
+    background: #fffbe6;
+    border-left: 3px solid #f0c000;
+    padding: 12px 16px;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #555;
+    margin: 0;
+    font-family: sans-serif;
+  }
+</style>
+</head>
+<body>
+
+<!-- NOTE -->
+<div class="note">
+  📐 <strong>Maquette fidélité moyenne</strong> — les images sont simulées par des dégradés (les vraies viendront de Shopify). Fais défiler pour voir toute la page.
+</div>
+
+<!-- HEADER -->
+<header class="header" id="header">
+  <div class="header-logo">Jacquemus</div>
+  <nav class="header-nav">
+    <a href="#">Collections</a>
+    <a href="#">Sacs</a>
+    <a href="#">Prêt-à-porter</a>
+    <a href="#" style="color: #c8a96e;">Personal Shopper ✦</a>
+  </nav>
+  <div class="header-ctas">
+    <a href="#">Search</a>
+    <a href="#">Account</a>
+    <a href="#">Cart (0)</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" style="position: relative;">
+
+  <!-- Gauche : campagne -->
+  <div class="hero-left">
+    <div class="hero-left-image"></div>
+    <div class="hero-left-label">SS 26 — La Collection</div>
+    <div class="hero-left-content">
+      <h1 class="hero-left-title">La Maison<br>Jacquemus</h1>
+      <a href="#" class="hero-left-cta">Découvrir la collection</a>
+    </div>
+    <!-- annotation -->
+    <div class="annotation" style="top: 108px; left: 32px;">Image campagne Shopify (collection featured)</div>
+  </div>
+
+  <!-- Droite : produit star -->
+  <div class="hero-right">
+    <div class="hero-right-image">Image produit</div>
+    <div class="hero-right-content">
+      <div>
+        <div class="hero-right-name">Le Chiquito</div>
+        <div class="hero-right-price">490 €</div>
+      </div>
+      <a href="#" class="hero-right-add">Add to cart</a>
+    </div>
+    <!-- annotation -->
+    <div class="annotation" style="top: 32px; left: 32px;">Produit star — 1er produit de la collection</div>
+  </div>
+
+</section>
+
+<!-- NOUVEAUTÉS -->
+<section class="nouveautes">
+  <div class="nouveautes-header">
+    <span class="nouveautes-title">Nouveautés</span>
+    <a href="#" class="nouveautes-link">Voir tout</a>
+  </div>
+  <div class="nouveautes-grid">
+    <div class="product-card">
+      <div class="product-card-image">Photo produit</div>
+      <div class="product-card-body">
+        <div class="product-card-name">Le Bambino</div>
+        <div class="product-card-price">680 €</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-card-image">Photo produit</div>
+      <div class="product-card-body">
+        <div class="product-card-name">Le Grand Chouchou</div>
+        <div class="product-card-price">590 €</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-card-image">Photo produit</div>
+      <div class="product-card-body">
+        <div class="product-card-name">Le Typo</div>
+        <div class="product-card-price">350 €</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-card-image">Photo produit</div>
+      <div class="product-card-body">
+        <div class="product-card-name">Le Bisou</div>
+        <div class="product-card-price">295 €</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-logo">Jacquemus</div>
+  <div class="footer-copy">© 2026 Jacquemus</div>
+</footer>
+
+<script>
+  // Simulate header scroll effect
+  const header = document.getElementById('header');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 20) header.classList.add('scrolled');
+    else header.classList.remove('scrolled');
+  });
+</script>
+</body>
+</html>

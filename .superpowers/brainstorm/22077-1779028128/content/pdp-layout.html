@@ -1,0 +1,132 @@
+<style>
+  .pdp-sim {
+    font-family: 'Helvetica Neue', sans-serif;
+    background: #FDFAF6;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+  .pdp-sim .img { background: #EDE8E1; height: 200px; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; }
+  .pdp-sim .info { padding: 16px; border-bottom: 1px solid #E8E3DC; }
+  .pdp-sim .info h4 { margin: 0 0 4px; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 500; }
+  .pdp-sim .info .price { font-size: 13px; color: #555; margin: 0; }
+  .pdp-sim .cta { padding: 12px 16px; }
+  .pdp-sim .btn-add { background: #1a1a1a; color: #fff; border: none; width: 100%; padding: 12px; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; border-radius: 4px; }
+  .pdp-sim .look-section { background: #F5F1EB; border-top: 1px solid #E8E3DC; padding: 14px 16px; }
+  .pdp-sim .look-label { font-size: 7px; letter-spacing: 0.22em; text-transform: uppercase; color: #8a7d6e; margin-bottom: 10px; }
+  .pdp-sim .look-cards { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+  .pdp-sim .look-card { background: #fff; border: 1px solid #E8E3DC; width: 70px; flex-shrink: 0; border-radius: 2px; overflow: hidden; }
+  .pdp-sim .look-card .img-sm { background: #EDE8E1; height: 85px; }
+  .pdp-sim .look-card .name { font-size: 6px; letter-spacing: 0.12em; text-transform: uppercase; padding: 4px 5px; color: #555; }
+  .pdp-sim .btn-look { background: transparent; border: 1px solid #1a1a1a; color: #1a1a1a; width: 100%; padding: 9px; font-size: 7px; letter-spacing: 0.18em; text-transform: uppercase; margin-top: 10px; border-radius: 2px; cursor: pointer; }
+
+  .pdp-sim-b .look-section-b { padding: 16px; border-top: 1px solid #E8E3DC; }
+  .pdp-sim-b .look-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+  .pdp-sim-b .look-item { background: #F5F1EB; border-radius: 4px; overflow: hidden; }
+  .pdp-sim-b .look-item .img-sq { background: #EDE8E1; height: 100px; }
+  .pdp-sim-b .look-item .lname { font-size: 7px; letter-spacing: 0.12em; text-transform: uppercase; padding: 6px 8px; color: #555; }
+
+  .pdp-sim-c { position: relative; }
+  .pdp-sim-c .drawer { position: absolute; bottom: 0; left: 0; right: 0; background: #fff; border-top: 2px solid #1a1a1a; padding: 14px 16px; }
+  .pdp-sim-c .drawer-title { font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; }
+  .pdp-sim-c .look-row { display: flex; gap: 8px; overflow-x: auto; }
+</style>
+
+<h2>Où et comment apparaît le panneau "Compose le look" ?</h2>
+<p class="subtitle">Trois intégrations possibles dans la PDP — clique sur celle qui correspond à ta vision</p>
+
+<div class="cards">
+
+  <!-- Option A -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 16px; background: #faf9f7;">
+      <div class="pdp-sim">
+        <div class="img">Photo produit</div>
+        <div class="info">
+          <h4>Le Bambino</h4>
+          <p class="price">395 €</p>
+        </div>
+        <div class="cta">
+          <button class="btn-add">Ajouter au panier</button>
+        </div>
+        <div class="look-section">
+          <div class="look-label">✦ Compose le look complet</div>
+          <div class="look-cards">
+            <div class="look-card"><div class="img-sm"></div><div class="name">Robe</div></div>
+            <div class="look-card"><div class="img-sm"></div><div class="name">Sandales</div></div>
+            <div class="look-card"><div class="img-sm"></div><div class="name">Ceinture</div></div>
+            <div class="look-card" style="border:1px dashed #ddd;display:flex;align-items:center;justify-content:center;color:#ccc;font-size:7px;letter-spacing:0.1em;">+1</div>
+          </div>
+          <button class="btn-look">Ajouter le look entier</button>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Section sous le CTA</h3>
+      <p>Le panneau s'étend sous le bouton "Ajouter au panier". Scroll horizontal pour les pièces. Naturel dans le flow de lecture.</p>
+    </div>
+  </div>
+
+  <!-- Option B -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 16px; background: #faf9f7;">
+      <div class="pdp-sim pdp-sim-b">
+        <div class="img">Photo produit</div>
+        <div class="info">
+          <h4>Le Bambino</h4>
+          <p class="price">395 €</p>
+        </div>
+        <div class="cta">
+          <button class="btn-add">Ajouter au panier</button>
+        </div>
+        <div class="look-section-b">
+          <div class="look-label" style="font-size:7px;letter-spacing:0.22em;text-transform:uppercase;color:#8a7d6e;">✦ Compose le look complet</div>
+          <div class="look-grid">
+            <div class="look-item"><div class="img-sq"></div><div class="lname">Robe soleil</div></div>
+            <div class="look-item"><div class="img-sq"></div><div class="lname">Sandales</div></div>
+            <div class="look-item"><div class="img-sq"></div><div class="lname">Ceinture</div></div>
+            <div class="look-item" style="background:#fff;border:1px dashed #ddd;display:flex;align-items:center;justify-content:center;height:106px;color:#ccc;font-size:8px;">+1</div>
+          </div>
+          <button class="btn-look" style="background:transparent;border:1px solid #1a1a1a;width:100%;padding:9px;font-size:7px;letter-spacing:0.18em;text-transform:uppercase;margin-top:10px;border-radius:2px;">Ajouter le look entier</button>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Grille 2 colonnes</h3>
+      <p>Même position, mais les pièces sont en grille. Plus compact visuellement, lisible d'un coup d'œil.</p>
+    </div>
+  </div>
+
+  <!-- Option C -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 16px; background: #faf9f7;">
+      <div class="pdp-sim pdp-sim-c" style="min-height: 340px;">
+        <div class="img">Photo produit</div>
+        <div class="info">
+          <h4>Le Bambino</h4>
+          <p class="price">395 €</p>
+        </div>
+        <div class="cta">
+          <button class="btn-add">Ajouter au panier</button>
+          <button style="background:transparent;border:none;width:100%;font-size:8px;letter-spacing:0.16em;text-transform:uppercase;color:#8a7d6e;padding:8px;cursor:pointer;margin-top:4px;">✦ Voir le look complet ↑</button>
+        </div>
+        <div class="drawer">
+          <div class="drawer-title">✦ Le look complet</div>
+          <div class="look-row">
+            <div class="look-card"><div class="img-sm"></div><div class="name">Robe</div></div>
+            <div class="look-card"><div class="img-sm"></div><div class="name">Sandales</div></div>
+            <div class="look-card"><div class="img-sm"></div><div class="name">Ceinture</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Drawer collapsible</h3>
+      <p>Un bouton "Voir le look" sous le CTA ouvre/ferme un tiroir. Le panneau ne prend de place que si l'utilisateur le veut.</p>
+    </div>
+  </div>
+
+</div>

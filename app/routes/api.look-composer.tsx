@@ -41,7 +41,7 @@ export async function action({request, context}: Route.ActionArgs) {
     return Response.json({error: 'ANTHROPIC_API_KEY not configured'}, {status: 500});
   }
 
-  const client = new Anthropic({apiKey: anthropicKey});
+  const client = new Anthropic({apiKey: anthropicKey, maxRetries: 4});
 
   const stream = new ReadableStream({
     async start(controller) {
@@ -57,7 +57,7 @@ export async function action({request, context}: Route.ActionArgs) {
       try {
         // ── Étape 1 : Claude décide les catégories à chercher ──────────────
         const strategyMsg = await client.messages.create({
-          model: 'claude-haiku-4-5-20251001',
+          model: 'claude-sonnet-4-6',
           max_tokens: 60,
           system: STRATEGY_PROMPT,
           messages: [
@@ -118,7 +118,7 @@ export async function action({request, context}: Route.ActionArgs) {
           .join('\n\n');
 
         const selectionMsg = await client.messages.create({
-          model: 'claude-haiku-4-5-20251001',
+          model: 'claude-sonnet-4-6',
           max_tokens: 120,
           system: SELECTION_PROMPT,
           messages: [

@@ -1,0 +1,203 @@
+<style>
+  * { box-sizing: border-box; }
+  body { background: #f7f5f1; }
+  .pdp-wrap { display: flex; gap: 32px; flex-wrap: wrap; justify-content: center; align-items: flex-start; }
+
+  .pdp {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background: #FDFAF6;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    width: 240px;
+    flex-shrink: 0;
+  }
+  .pdp .prod-img { background: #EDE8E1; height: 160px; display: flex; align-items: center; justify-content: center; color: #bbb; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; }
+  .pdp .prod-info { padding: 12px 14px 8px; border-bottom: 1px solid #ece8e2; }
+  .pdp .prod-title { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 500; margin: 0 0 3px; color: #1a1a1a; }
+  .pdp .prod-price { font-size: 12px; color: #555; margin: 0; }
+  .pdp .prod-cta { padding: 10px 14px 12px; }
+  .pdp .btn-add { background: #1a1a1a; color: #fff; border: none; width: 100%; padding: 10px; font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; border-radius: 3px; }
+
+  /* Look section */
+  .look-section { border-top: 1px solid #E8E3DC; background: #F5F1EB; padding: 12px 14px 14px; }
+  .look-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .look-label { font-size: 7px; letter-spacing: 0.22em; text-transform: uppercase; color: #8a7d6e; }
+  .look-spark { color: #c8a96e; font-size: 9px; }
+
+  /* State: idle (CTA button) */
+  .btn-compose { background: transparent; border: 1px solid #8a7d6e; color: #8a7d6e; width: 100%; padding: 8px; font-size: 7px; letter-spacing: 0.18em; text-transform: uppercase; border-radius: 2px; cursor: pointer; }
+
+  /* State: loading */
+  .loading-bar { display: flex; gap: 5px; align-items: center; padding: 6px 0; }
+  .dot { width: 5px; height: 5px; border-radius: 50%; background: #C9BFB2; }
+  .loading-text { font-size: 8px; color: #8a7d6e; letter-spacing: 0.12em; }
+
+  /* State: loaded — cards */
+  .look-cards { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+  .look-card { background: #fff; border: 1px solid #E8E3DC; width: 68px; flex-shrink: 0; border-radius: 2px; overflow: hidden; }
+  .look-card .img-sm { height: 82px; background: #EDE8E1; }
+  .look-card .img-sm.c1 { background: #D4C5B5; }
+  .look-card .img-sm.c2 { background: #C8B89E; }
+  .look-card .img-sm.c3 { background: #BEA98A; }
+  .look-card .card-info { padding: 4px 5px 6px; }
+  .look-card .cname { font-size: 6px; letter-spacing: 0.1em; text-transform: uppercase; color: #1a1a1a; display: block; margin-bottom: 2px; font-weight: 500; }
+  .look-card .cprice { font-size: 7px; color: #888; display: block; }
+  .look-card .ctag { font-size: 5.5px; color: #4a9e6d; background: #e8f5ee; padding: 2px 4px; border-radius: 2px; margin-top: 3px; display: inline-block; letter-spacing: 0.06em; }
+  .btn-look-all { background: #1a1a1a; color: #FDFAF6; border: none; width: 100%; padding: 9px; font-size: 7px; letter-spacing: 0.18em; text-transform: uppercase; border-radius: 2px; margin-top: 10px; cursor: pointer; }
+  .look-note { font-size: 6px; color: #aaa; letter-spacing: 0.08em; text-align: center; margin-top: 6px; }
+
+  /* State labels */
+  .state-label { font-size: 8px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #8a7d6e; text-align: center; margin-top: 10px; opacity: 0.7; }
+
+  /* Flow diagram */
+  .flow { display: flex; flex-direction: column; gap: 0; width: 260px; }
+  .flow-step { background: #fff; border: 1px solid #e0dbd4; border-radius: 6px; padding: 10px 14px; position: relative; }
+  .flow-step + .flow-step { margin-top: 6px; }
+  .flow-step::after { content: '↓'; position: absolute; bottom: -14px; left: 50%; transform: translateX(-50%); font-size: 12px; color: #c8a96e; }
+  .flow-step:last-child::after { display: none; }
+  .flow-num { font-size: 7px; letter-spacing: 0.15em; text-transform: uppercase; color: #c8a96e; margin-bottom: 4px; font-weight: 600; }
+  .flow-title { font-size: 9px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #1a1a1a; margin-bottom: 3px; }
+  .flow-detail { font-size: 8px; color: #666; line-height: 1.5; }
+  .flow-tag { display: inline-block; font-size: 6.5px; background: #f0ece5; border: 1px solid #ddd6cc; border-radius: 3px; padding: 2px 5px; margin-top: 4px; color: #8a7d6e; letter-spacing: 0.08em; }
+</style>
+
+<h2>Design final — "Compose le look complet"</h2>
+<p class="subtitle">États UI · Flow agent · Architecture</p>
+
+<!-- ROW 1: UI States -->
+<h3 style="text-align:center; margin: 24px 0 16px; font-size:9px; letter-spacing:0.2em; text-transform:uppercase; color:#8a7d6e;">États du panneau</h3>
+<div class="pdp-wrap">
+
+  <!-- État 1: Idle -->
+  <div>
+    <div class="pdp">
+      <div class="prod-img">Photo produit</div>
+      <div class="prod-info">
+        <p class="prod-title">Le Bambino</p>
+        <p class="prod-price">395 €</p>
+      </div>
+      <div class="prod-cta">
+        <button class="btn-add">Ajouter au panier</button>
+      </div>
+      <div class="look-section">
+        <div class="look-header">
+          <span class="look-label"><span class="look-spark">✦</span> Compose le look complet</span>
+        </div>
+        <button class="btn-compose">Voir les suggestions →</button>
+      </div>
+    </div>
+    <div class="state-label">① Idle</div>
+  </div>
+
+  <!-- État 2: Loading -->
+  <div>
+    <div class="pdp">
+      <div class="prod-img">Photo produit</div>
+      <div class="prod-info">
+        <p class="prod-title">Le Bambino</p>
+        <p class="prod-price">395 €</p>
+      </div>
+      <div class="prod-cta">
+        <button class="btn-add">Ajouter au panier</button>
+      </div>
+      <div class="look-section">
+        <div class="look-header">
+          <span class="look-label"><span class="look-spark">✦</span> Compose le look complet</span>
+        </div>
+        <div class="loading-bar">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <span class="loading-text">L'agent compose votre look…</span>
+        </div>
+        <div style="background:#ede8e1;height:82px;border-radius:2px;opacity:0.4;margin-top:6px;"></div>
+      </div>
+    </div>
+    <div class="state-label">② Chargement (~2s)</div>
+  </div>
+
+  <!-- État 3: Loaded -->
+  <div>
+    <div class="pdp">
+      <div class="prod-img">Photo produit</div>
+      <div class="prod-info">
+        <p class="prod-title">Le Bambino</p>
+        <p class="prod-price">395 €</p>
+      </div>
+      <div class="prod-cta">
+        <button class="btn-add">Ajouter au panier</button>
+      </div>
+      <div class="look-section">
+        <div class="look-header">
+          <span class="look-label"><span class="look-spark">✦</span> Le look complet</span>
+        </div>
+        <div class="look-cards">
+          <div class="look-card">
+            <div class="img-sm c1"></div>
+            <div class="card-info">
+              <span class="cname">Robe Linu</span>
+              <span class="cprice">645 €</span>
+              <span class="ctag">Dispo S</span>
+            </div>
+          </div>
+          <div class="look-card">
+            <div class="img-sm c2"></div>
+            <div class="card-info">
+              <span class="cname">Mules</span>
+              <span class="cprice">520 €</span>
+              <span class="ctag">Dispo 38</span>
+            </div>
+          </div>
+          <div class="look-card">
+            <div class="img-sm c3"></div>
+            <div class="card-info">
+              <span class="cname">Ceinture</span>
+              <span class="cprice">195 €</span>
+              <span class="ctag">Dispo</span>
+            </div>
+          </div>
+        </div>
+        <button class="btn-look-all">Ajouter le look entier</button>
+        <div class="look-note">Tailles modifiables dans le panier</div>
+      </div>
+    </div>
+    <div class="state-label">③ Look composé</div>
+  </div>
+
+</div>
+
+<!-- ROW 2: Agent flow -->
+<h3 style="text-align:center; margin: 32px 0 16px; font-size:9px; letter-spacing:0.2em; text-transform:uppercase; color:#8a7d6e;">Flow de l'agent</h3>
+<div style="display:flex; justify-content:center;">
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-num">Clic utilisateur</div>
+      <div class="flow-title">Déclenchement</div>
+      <div class="flow-detail">POST /api/look-composer<br>{ productTitle, tags, productType }</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">Étape 1 — Claude Haiku</div>
+      <div class="flow-title">Stratégie de recherche</div>
+      <div class="flow-detail">Claude reçoit le produit courant et décide quelles catégories chercher. Retourne 2-3 requêtes MCP à exécuter.</div>
+      <span class="flow-tag">ex: ["robe", "sandales", "ceinture"]</span>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">Étape 2 — Shopify MCP ×2-3</div>
+      <div class="flow-title">Recherche catalogue</div>
+      <div class="flow-detail">Appels search_catalog en parallèle. Filtre : availableForSale uniquement. Sélection du 1er variant dispo par pièce.</div>
+      <span class="flow-tag">callShopifyMCPTool (existant)</span>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">Étape 3 — Claude Haiku</div>
+      <div class="flow-title">Sélection finale + texte</div>
+      <div class="flow-detail">Claude choisit la pièce la plus cohérente par catégorie et génère 1 phrase d'ambiance en français.</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">Réponse</div>
+      <div class="flow-title">SSE → UI</div>
+      <div class="flow-detail">Événements : look (produits) + text (phrase). Même pattern que /api/chat.</div>
+      <span class="flow-tag">event: look · event: text · event: done</span>
+    </div>
+  </div>
+</div>

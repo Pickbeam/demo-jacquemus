@@ -1,0 +1,67 @@
+<h2>Quelle structure pour la home page ?</h2>
+<p class="subtitle">Jacquemus mise tout sur l'image et l'espace — quelle organisation te parle le plus ?</p>
+
+<div class="cards">
+
+  <div class="card" data-choice="editorial" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#f5f2ee; padding: 20px; font-family: sans-serif;">
+      <div style="background:#1a1a1a; height: 220px; display:flex; align-items:flex-end; padding:20px; color:white; letter-spacing:0.15em; font-size:10px; text-transform:uppercase;">
+        <div>
+          <div style="font-size:22px; font-weight:200; letter-spacing:0.08em; margin-bottom:6px;">La Collection</div>
+          <div style="opacity:0.5; font-size:9px; letter-spacing:0.2em;">SS 26 — Discover</div>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:6px;">
+        <div style="background:#d4c5b0; height:80px;"></div>
+        <div style="background:#c8b99a; height:80px;"></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Éditorial plein écran</h3>
+      <p>Grand hero pleine largeur + grille de produits. Immersif, centré sur l'image de campagne.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="split" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#f5f2ee; padding: 20px; font-family: sans-serif;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:0; height:220px; overflow:hidden;">
+        <div style="background:#1a1a1a; display:flex; flex-direction:column; justify-content:flex-end; padding:16px; color:white;">
+          <div style="font-size:18px; font-weight:200; letter-spacing:0.06em; margin-bottom:4px;">LE GRAND</div>
+          <div style="font-size:18px; font-weight:200; letter-spacing:0.06em;">CHOUCHOU</div>
+          <div style="font-size:8px; letter-spacing:0.2em; text-transform:uppercase; opacity:0.4; margin-top:8px;">Shop now</div>
+        </div>
+        <div style="background:#c8b99a; display:flex; align-items:center; justify-content:center; font-size:9px; letter-spacing:0.15em; text-transform:uppercase; color:#7a6a55;">Image produit</div>
+      </div>
+      <div style="display:flex; gap:6px; margin-top:6px;">
+        <div style="background:#d4c5b0; height:50px; flex:1;"></div>
+        <div style="background:#b8a89a; height:50px; flex:1;"></div>
+        <div style="background:#c8b99a; height:50px; flex:1;"></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Split éditorial + produit</h3>
+      <p>Hero coupé en deux : visuel campagne à gauche, produit star à droite. Sélection en bas.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="cinematic" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#f5f2ee; padding: 20px; font-family: sans-serif;">
+      <div style="background:#1a1a1a; height:140px; display:flex; align-items:center; justify-content:center; color:white; letter-spacing:0.3em; font-size:11px; text-transform:uppercase; font-weight:300;">
+        JACQUEMUS
+      </div>
+      <div style="background:#c8b99a; height:60px; margin-top:0; display:flex; align-items:center; padding:0 16px;">
+        <div style="font-size:8px; letter-spacing:0.2em; text-transform:uppercase; color:#7a6a55;">New arrivals</div>
+      </div>
+      <div style="display:grid; grid-template-columns: 2fr 1fr 1fr; gap:4px; margin-top:4px;">
+        <div style="background:#d4c5b0; height:60px;"></div>
+        <div style="background:#b8a89a; height:60px;"></div>
+        <div style="background:#1a1a1a; height:60px;"></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Cinématique empilé</h3>
+      <p>Sections qui s'enchaînent : hero typographique → bande texturée → mosaïque de produits asymétrique.</p>
+    </div>
+  </div>
+
+</div>

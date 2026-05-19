@@ -77,7 +77,7 @@ export async function action({request, context}: Route.ActionArgs) {
         const userPrompt = SUGGEST_PROMPT.replace('{CART_ITEMS}', itemsList);
 
         const msg = await client.messages.create({
-          model: 'claude-haiku-4-5-20251001',
+          model: 'claude-sonnet-4-6',
           max_tokens: 200,
           messages: [{role: 'user', content: userPrompt}],
         });

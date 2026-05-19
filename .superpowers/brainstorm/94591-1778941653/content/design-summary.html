@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:system-ui,-apple-system,sans-serif; background:#f5f2ed; color:#1a1a1a; padding:32px; }
+  h1 { font-size:11px; letter-spacing:0.15em; text-transform:uppercase; color:#999; margin-bottom:6px; }
+  .subtitle { font-size:22px; font-weight:700; margin-bottom:6px; }
+  .sub2 { font-size:13px; color:#888; margin-bottom:32px; }
+
+  .full-mockup { background:white; border-radius:6px; overflow:hidden; box-shadow:0 4px 32px rgba(0,0,0,0.08); max-width:960px; position:relative; }
+
+  /* Header */
+  .hdr { height:56px; background:white; border-bottom:1px solid #ebebeb; display:flex; align-items:center; padding:0 32px; gap:0; }
+  .logo { font-size:16px; font-weight:900; letter-spacing:0.05em; text-transform:uppercase; }
+  .nav { display:flex; gap:28px; font-size:10px; letter-spacing:0.13em; text-transform:uppercase; color:#555; margin:0 auto; align-items:center; }
+  .nav .gold { color:#c8a96e; font-weight:700; }
+  .ctas { display:flex; gap:20px; font-size:10px; letter-spacing:0.13em; text-transform:uppercase; color:#555; align-items:center; }
+  .cart-dot { background:#1a1a1a; color:white; width:16px; height:16px; border-radius:50%; font-size:8px; display:inline-flex; align-items:center; justify-content:center; margin-left:3px; }
+
+  /* Page content (collections mock) */
+  .page-content { padding:32px; background:#faf7f2; min-height:220px; }
+  .page-title { font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:#bbb; text-align:center; margin-bottom:20px; }
+  .products-grid { display:flex; gap:12px; justify-content:center; }
+  .prod-card { background:white; border-radius:2px; width:140px; overflow:hidden; border:1px solid #ebe8e3; }
+  .prod-img { height:100px; background:linear-gradient(135deg,#ede9e3,#e0dbd3); }
+  .prod-info { padding:8px 10px; }
+  .prod-name { font-size:9px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; color:#1a1a1a; }
+  .prod-price { font-size:10px; color:#888; margin-top:3px; }
+  .prod-btn { display:block; width:100%; margin-top:6px; background:#1a1a1a; color:white; border:none; padding:5px; font-size:8px; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; border-radius:1px; }
+
+  /* Chat overlay */
+  .chat-overlay { background:white; border-top:1px solid #ebebeb; padding:16px 20px 12px; }
+  .overlay-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+  .overlay-title { font-size:9px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#1a1a1a; }
+  .overlay-gold { color:#c8a96e; }
+  .overlay-close { font-size:14px; color:#bbb; cursor:pointer; line-height:1; }
+  .messages { display:flex; flex-direction:column; gap:8px; margin-bottom:12px; }
+  .msg-user { background:#1a1a1a; color:white; padding:8px 12px; border-radius:2px; font-size:11px; align-self:flex-end; max-width:60%; }
+  .msg-agent { background:#f5f2ed; color:#444; padding:8px 12px; border-radius:2px; font-size:11px; align-self:flex-start; max-width:75%; line-height:1.6; }
+  .products-row { display:flex; gap:10px; overflow-x:auto; padding-bottom:4px; }
+  .mini-prod { background:white; border:1px solid #ebe8e3; border-radius:2px; width:100px; flex-shrink:0; overflow:hidden; }
+  .mini-img { height:80px; background:linear-gradient(135deg,#ede9e3,#e0dbd3); }
+  .mini-info { padding:6px 8px; }
+  .mini-name { font-size:8px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; color:#1a1a1a; }
+  .mini-price { font-size:9px; color:#888; margin-top:2px; }
+  .mini-btn { display:block; width:100%; background:#1a1a1a; color:white; border:none; padding:4px; font-size:7px; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; margin-top:4px; }
+
+  /* Bottom bar */
+  .bar { height:52px; background:#1a1a1a; display:flex; align-items:center; padding:0 24px; gap:14px; }
+  .bar-label { font-size:9px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#c8a96e; white-space:nowrap; }
+  .bar-sep { width:1px; height:22px; background:rgba(255,255,255,0.1); }
+  .bar-input { flex:1; background:rgba(255,255,255,0.08); border:none; border-radius:2px; height:30px; padding:0 12px; font-size:10px; color:rgba(255,255,255,0.4); letter-spacing:0.04em; display:flex; align-items:center; }
+  .bar-btn { background:#c8a96e; color:white; border:none; padding:6px 16px; font-size:9px; letter-spacing:0.1em; text-transform:uppercase; border-radius:1px; white-space:nowrap; }
+
+  /* Footer */
+  .ftr { background:#1a1a1a; padding:28px 32px; display:flex; justify-content:space-between; align-items:center; }
+  .ftr-logo { font-size:14px; font-weight:900; letter-spacing:0.05em; text-transform:uppercase; color:white; }
+  .ftr-links { display:flex; gap:24px; font-size:9px; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.4); }
+  .ftr-copy { font-size:9px; letter-spacing:0.08em; text-transform:uppercase; color:rgba(255,255,255,0.25); }
+
+  /* Annotations */
+  .annotations { max-width:960px; margin-top:24px; display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .annot { background:white; border-radius:4px; padding:16px; border-left:3px solid #c8a96e; }
+  .annot-title { font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#1a1a1a; margin-bottom:6px; }
+  .annot-body { font-size:12px; color:#666; line-height:1.6; }
+  .annot-body code { background:#f5f2ed; padding:1px 5px; border-radius:2px; font-size:11px; color:#1a1a1a; }
+</style>
+</head>
+<body>
+<h1>Design final — récapitulatif</h1>
+<p class="subtitle">Aperçu complet : header · overlay chat · barre · footer</p>
+<p class="sub2">État avec le chat ouvert après une recherche. Confirme pour passer à l'implémentation.</p>
+
+<div class="full-mockup">
+  <!-- Header -->
+  <div class="hdr">
+    <span class="logo">Jacquemus</span>
+    <nav class="nav">
+      <span>Collections</span>
+      <span class="gold">Personal Shopper ✦</span>
+      <span>À propos</span>
+    </nav>
+    <div class="ctas">
+      <span>Recherche</span>
+      <span>Compte</span>
+      <span>Panier<span class="cart-dot">2</span></span>
+    </div>
+  </div>
+
+  <!-- Page content -->
+  <div class="page-content">
+    <div class="page-title">— Collections —</div>
+    <div class="products-grid">
+      <div class="prod-card"><div class="prod-img"></div><div class="prod-info"><div class="prod-name">Le Bambino</div><div class="prod-price">741 €</div><button class="prod-btn">Add to Cart</button></div></div>
+      <div class="prod-card"><div class="prod-img"></div><div class="prod-info"><div class="prod-name">Le Chiquito</div><div class="prod-price">559 €</div><button class="prod-btn">Add to Cart</button></div></div>
+      <div class="prod-card"><div class="prod-img"></div><div class="prod-info"><div class="prod-name">Bisou Sandals</div><div class="prod-price">559 €</div><button class="prod-btn">Add to Cart</button></div></div>
+      <div class="prod-card"><div class="prod-img"></div><div class="prod-info"><div class="prod-name">La Robe Notte</div><div class="prod-price">551 €</div><button class="prod-btn">Add to Cart</button></div></div>
+    </div>
+  </div>
+
+  <!-- Chat overlay (open state) -->
+  <div class="chat-overlay">
+    <div class="overlay-header">
+      <span class="overlay-title">Personal Shopper <span class="overlay-gold">✦</span></span>
+      <span class="overlay-close">×</span>
+    </div>
+    <div class="messages">
+      <div class="msg-user">Un sac iconique pour le quotidien ou le soir</div>
+      <div class="msg-agent">Du Bambino au Chiquito, voici les silhouettes qui ont fait la légende de la maison — structurées, sensuelles, aussi à l'aise sous le soleil que sous les lumières du soir.</div>
+    </div>
+    <div class="products-row">
+      <div class="mini-prod"><div class="mini-img"></div><div class="mini-info"><div class="mini-name">Le Bambino</div><div class="mini-price">741 €</div><button class="mini-btn">Add to Cart</button></div></div>
+      <div class="mini-prod"><div class="mini-img"></div><div class="mini-info"><div class="mini-name">Le Chiquito</div><div class="mini-price">559 €</div><button class="mini-btn">Add to Cart</button></div></div>
+      <div class="mini-prod"><div class="mini-img"></div><div class="mini-info"><div class="mini-name">Le Grand</div><div class="mini-price">915 €</div><button class="mini-btn">Add to Cart</button></div></div>
+      <div class="mini-prod"><div class="mini-img"></div><div class="mini-info"><div class="mini-name">Bambino Leather</div><div class="mini-price">818 €</div><button class="mini-btn">Add to Cart</button></div></div>
+    </div>
+  </div>
+
+  <!-- Bottom bar -->
+  <div class="bar">
+    <span class="bar-label">Personal Shopper ✦</span>
+    <div class="bar-sep"></div>
+    <div class="bar-input">Que cherchez-vous aujourd'hui ?</div>
+    <button class="bar-btn">Envoyer</button>
+  </div>
+
+  <!-- Footer -->
+  <div class="ftr">
+    <span class="ftr-logo">Jacquemus</span>
+    <div class="ftr-links">
+      <span>Confidentialité</span><span>Remboursements</span><span>Expédition</span><span>CGV</span>
+    </div>
+    <span class="ftr-copy">© 2025 Jacquemus</span>
+  </div>
+</div>
+
+<!-- Annotations -->
+<div class="annotations">
+  <div class="annot">
+    <div class="annot-title">Header</div>
+    <div class="annot-body">Logo image PNG · Nav centré · "Personal Shopper ✦" en <code>#c8a96e</code> · Fond blanc, bordure <code>#ebebeb</code></div>
+  </div>
+  <div class="annot">
+    <div class="annot-title">Chat Overlay</div>
+    <div class="annot-body">S'ouvre au-dessus de la barre · Messages + product cards compactes · Fermeture via ×</div>
+  </div>
+  <div class="annot">
+    <div class="annot-title">Barre persistante</div>
+    <div class="annot-body">Fixe sur toutes les pages · Fond <code>#1a1a1a</code> · Label gold · Appelle <code>/api/chat</code></div>
+  </div>
+  <div class="annot">
+    <div class="annot-title">Footer</div>
+    <div class="annot-body">Fond noir · Logo blanc · Liens légaux · <code>© 2025</code> · Single row épuré</div>
+  </div>
+</div>
+
+</body>
+</html>

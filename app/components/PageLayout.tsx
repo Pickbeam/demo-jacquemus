@@ -6,6 +6,7 @@ import type {
   HeaderQuery,
 } from 'storefrontapi.generated';
 import {Aside} from '~/components/Aside';
+import {ChatBar} from '~/components/ChatBar';
 import {Footer} from '~/components/Footer';
 import {Header, HeaderMenu} from '~/components/Header';
 import {CartMain} from '~/components/CartMain';
@@ -46,6 +47,7 @@ export function PageLayout({
         />
       )}
       <main>{children}</main>
+      <ChatBar />
       <Footer
         footer={footer}
         header={header}

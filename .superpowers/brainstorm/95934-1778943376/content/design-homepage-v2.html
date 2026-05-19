@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home Page — Design Jacquemus v2</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background: #fff;
+    color: #000;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    height: 56px;
+    background: transparent;
+    transition: background 0.3s ease, border-color 0.3s;
+    border-bottom: 1px solid transparent;
+  }
+  .header.scrolled { background: #fff; border-color: #f0f0f0; }
+  .header-logo { font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; font-weight: 300; color: #fff; transition: color 0.3s; }
+  .header.scrolled .header-logo { color: #000; }
+  .header-nav { display: flex; gap: 32px; align-items: center; }
+  .header-nav a { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.7); text-decoration: none; font-weight: 300; transition: color 0.3s; }
+  .header.scrolled .header-nav a { color: #444; }
+  .header-ctas { display: flex; gap: 24px; align-items: center; }
+  .header-ctas a { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.7); text-decoration: none; font-weight: 300; transition: color 0.3s; }
+  .header.scrolled .header-ctas a { color: #444; }
+
+  /* ── HERO ── */
+  .hero { display: grid; grid-template-columns: 1fr 1fr; height: 100vh; min-height: 600px; }
+  .hero-left { position: relative; overflow: hidden; background: #1a1a1a; }
+  .hero-left-bg { width: 100%; height: 100%; background: linear-gradient(160deg, #2a2a2a 0%, #1a1a1a 40%, #0a0a0a 100%); }
+  .hero-left-label { position: absolute; top: 72px; left: 32px; font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(255,255,255,0.4); font-weight: 300; }
+  .hero-left-content { position: absolute; bottom: 40px; left: 32px; right: 32px; }
+  .hero-left-title { font-size: clamp(36px, 4.5vw, 64px); font-weight: 200; color: #fff; line-height: 1.05; letter-spacing: -0.01em; margin-bottom: 20px; }
+  .hero-left-cta { display: inline-block; font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(255,255,255,0.5); text-decoration: none; font-weight: 300; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 4px; }
+  .hero-right { position: relative; overflow: hidden; background: #f7f5f2; }
+  .hero-right-bg { position: absolute; inset: 0; background: linear-gradient(135deg, #f0ede8 0%, #e8e3dc 100%); display: flex; align-items: center; justify-content: center; color: #c0b8ae; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; }
+  .hero-right-content { position: absolute; bottom: 40px; left: 32px; right: 32px; display: flex; justify-content: space-between; align-items: flex-end; }
+  .hero-right-name { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: #000; font-weight: 300; margin-bottom: 4px; }
+  .hero-right-price { font-size: 11px; color: #888; font-weight: 300; }
+  .hero-right-add { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: #000; text-decoration: none; border-bottom: 1px solid #000; padding-bottom: 3px; font-weight: 300; }
+
+  /* ── NOUVEAUTÉS ── */
+  .nouveautes { padding: 80px 40px; }
+  .nouveautes-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 48px; }
+  .nouveautes-title { font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; font-weight: 300; }
+  .nouveautes-link { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: #999; text-decoration: none; border-bottom: 1px solid #e0e0e0; padding-bottom: 2px; }
+  .nouveautes-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; }
+  .product-card { overflow: hidden; cursor: pointer; }
+  .product-card-image { aspect-ratio: 3/4; overflow: hidden; background: linear-gradient(160deg, #eceae6 0%, #e0ddd8 100%); display: flex; align-items: center; justify-content: center; color: #c0b8ae; font-size: 8px; letter-spacing: 0.15em; text-transform: uppercase; transition: transform 0.5s ease; }
+  .product-card:hover .product-card-image { transform: scale(1.03); }
+  .product-card-body { padding: 14px 0 20px; }
+  .product-card-name { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #000; font-weight: 300; margin-bottom: 4px; }
+  .product-card-price { font-size: 10px; color: #999; font-weight: 300; }
+
+  /* ══════════════════════════════════
+     FOOTER — Jacquemus style
+  ══════════════════════════════════ */
+
+  /* 1. Bande de services */
+  .footer-services {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: 60px 40px;
+    border-top: 1px solid #e8e8e8;
+    text-align: center;
+  }
+  .footer-service + .footer-service {
+    border-left: 1px solid #e8e8e8;
+  }
+  .footer-service-title {
+    font-size: 13px;
+    font-weight: 300;
+    color: #000;
+    margin-bottom: 12px;
+    letter-spacing: 0.01em;
+  }
+  .footer-service-desc {
+    font-size: 12px;
+    font-weight: 300;
+    color: #aaa;
+    line-height: 1.6;
+  }
+
+  /* 2. Newsletter + Contact */
+  .footer-mid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-top: 1px solid #e8e8e8;
+  }
+  .footer-newsletter {
+    padding: 48px 40px;
+    border-right: 1px solid #e8e8e8;
+  }
+  .footer-newsletter-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+  .footer-newsletter-title {
+    font-size: 15px;
+    font-weight: 300;
+    color: #000;
+  }
+  .footer-newsletter-chevron {
+    font-size: 12px;
+    color: #000;
+  }
+  .footer-newsletter-desc {
+    font-size: 12px;
+    font-weight: 300;
+    color: #aaa;
+    line-height: 1.7;
+    max-width: 400px;
+    margin-bottom: 28px;
+  }
+  .footer-newsletter-btn {
+    display: block;
+    width: 100%;
+    max-width: 580px;
+    background: #000;
+    color: #fff;
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    font-weight: 400;
+    padding: 18px;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+  }
+
+  .footer-contact {
+    padding: 48px 40px;
+  }
+  .footer-contact-title {
+    font-size: 15px;
+    font-weight: 300;
+    color: #000;
+    margin-bottom: 16px;
+  }
+  .footer-contact-hours {
+    font-size: 12px;
+    font-weight: 300;
+    color: #aaa;
+    line-height: 1.7;
+    margin-bottom: 28px;
+  }
+  .footer-contact-links {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .footer-contact-links a {
+    font-size: 12px;
+    font-weight: 300;
+    color: #000;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* 3. Nav légale + réseaux */
+  .footer-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    align-items: start;
+    padding: 32px 40px;
+    border-top: 1px solid #e8e8e8;
+    gap: 20px;
+  }
+  .footer-nav-group-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 300;
+    color: #000;
+    cursor: pointer;
+  }
+  .footer-nav-group-title span { font-size: 10px; }
+  .footer-social-title {
+    font-size: 12px;
+    font-weight: 300;
+    color: #000;
+    margin-bottom: 10px;
+  }
+  .footer-social-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .footer-social-links a {
+    font-size: 11px;
+    font-weight: 300;
+    color: #000;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* 4. Barre de copyright */
+  .footer-bottom {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 24px 40px;
+    border-top: 1px solid #e8e8e8;
+  }
+  .footer-bottom-copy {
+    font-size: 10px;
+    font-weight: 300;
+    color: #aaa;
+    letter-spacing: 0.05em;
+  }
+  .footer-bottom-logo {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #000;
+    text-align: center;
+  }
+  .footer-bottom-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+  }
+  .footer-bottom-right a {
+    font-size: 10px;
+    font-weight: 300;
+    color: #000;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header" id="header">
+  <div class="header-logo">Jacquemus</div>
+  <nav class="header-nav">
+    <a href="#">Collections</a>
+    <a href="#">Sacs</a>
+    <a href="#">Prêt-à-porter</a>
+    <a href="#" style="color:#c8a96e;">Personal Shopper ✦</a>
+  </nav>
+  <div class="header-ctas">
+    <a href="#">Search</a>
+    <a href="#">Account</a>
+    <a href="#">Cart (0)</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-left-bg"></div>
+    <div class="hero-left-label">SS 26 — La Collection</div>
+    <div class="hero-left-content">
+      <h1 class="hero-left-title">La Maison<br>Jacquemus</h1>
+      <a href="#" class="hero-left-cta">Découvrir la collection</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-right-bg">Image produit</div>
+    <div class="hero-right-content">
+      <div>
+        <div class="hero-right-name">Le Chiquito</div>
+        <div class="hero-right-price">490 €</div>
+      </div>
+      <a href="#" class="hero-right-add">Add to cart</a>
+    </div>
+  </div>
+</section>
+
+<!-- NOUVEAUTÉS -->
+<section class="nouveautes">
+  <div class="nouveautes-header">
+    <span class="nouveautes-title">Nouveautés</span>
+    <a href="#" class="nouveautes-link">Voir tout</a>
+  </div>
+  <div class="nouveautes-grid">
+    <div class="product-card">
+      <div class="product-card-image">Photo produit</div>
+      <div class="product-card-body">
+        <div class="product-card-name">Le Bambino</div>
+        <div class="product-card-price">680 €</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-card-image">Photo produit</div>
+      <div class="product-card-body">
+        <div class="product-card-name">Le Grand Chouchou</div>
+        <div class="product-card-price">590 €</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-card-image">Photo produit</div>
+      <div class="product-card-body">
+        <div class="product-card-name">Le Typo</div>
+        <div class="product-card-price">350 €</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-card-image">Photo produit</div>
+      <div class="product-card-body">
+        <div class="product-card-name">Le Bisou</div>
+        <div class="product-card-price">295 €</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+
+<!-- 1. Services -->
+<div class="footer-services">
+  <div class="footer-service">
+    <div class="footer-service-title">Prendre un rendez-vous en boutique</div>
+    <div class="footer-service-desc">Paris, Londres, New York, Los Angeles...</div>
+  </div>
+  <div class="footer-service">
+    <div class="footer-service-title">Livraison et retours gratuits</div>
+    <div class="footer-service-desc">Livraison offerte<br>et retours simplifiés sous 14 jours.</div>
+  </div>
+  <div class="footer-service">
+    <div class="footer-service-title">Paiement sécurisé</div>
+    <div class="footer-service-desc">Visa, Mastercard, Paypal, Apple pay,<br>American express, Klarna</div>
+  </div>
+</div>
+
+<!-- 2. Newsletter + Contact -->
+<div class="footer-mid">
+  <div class="footer-newsletter">
+    <div class="footer-newsletter-toggle">
+      <span class="footer-newsletter-title">S'abonner à la newsletter</span>
+      <span class="footer-newsletter-chevron">∨</span>
+    </div>
+    <p class="footer-newsletter-desc">
+      Inscrivez-vous pour recevoir par e-mail toutes les informations sur nos dernières collections, nos produits, nos défilés de mode et nos projets.
+    </p>
+    <button class="footer-newsletter-btn">S'enregistrer</button>
+  </div>
+  <div class="footer-contact">
+    <div class="footer-contact-title">Besoin d'aide ? Contactez-nous</div>
+    <div class="footer-contact-hours">
+      Du Lundi au Vendredi de 10:00 à 13:00 et de 14:00 à 21:00,<br>
+      les samedis de 10:00 à 13:00 et de 14:00 à 18:00 CET.
+    </div>
+    <div class="footer-contact-links">
+      <a href="#">Formulaire de contact</a>
+      <a href="#">Suivre une commande</a>
+      <a href="#">Enregistrer un retour</a>
+    </div>
+  </div>
+</div>
+
+<!-- 3. Nav légale + réseaux -->
+<div class="footer-nav">
+  <div class="footer-nav-group-title">Mentions légales et cookies <span>∨</span></div>
+  <div class="footer-nav-group-title">FAQ <span>∨</span></div>
+  <div class="footer-nav-group-title">Entreprise <span>∨</span></div>
+  <div>
+    <div class="footer-social-title">Suivez nous</div>
+    <div class="footer-social-links">
+      <a href="#">Instagram</a>
+      <a href="#">Facebook</a>
+      <a href="#">Tiktok</a>
+      <a href="#">X</a>
+      <a href="#">Pinterest</a>
+    </div>
+  </div>
+</div>
+
+<!-- 4. Copyright -->
+<div class="footer-bottom">
+  <div class="footer-bottom-copy">© JACQUEMUS 2025</div>
+  <div class="footer-bottom-logo">Jacquemus</div>
+  <div class="footer-bottom-right">
+    <a href="#">Pays : France Métropolitaine (EUR)</a>
+    <a href="#">Langage : français ∨</a>
+  </div>
+</div>
+
+<script>
+  const header = document.getElementById('header');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 20) header.classList.add('scrolled');
+    else header.classList.remove('scrolled');
+  });
+</script>
+</body>
+</html>

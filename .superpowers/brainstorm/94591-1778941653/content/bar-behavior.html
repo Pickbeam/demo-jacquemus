@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: system-ui,-apple-system,sans-serif; background:#f5f2ed; color:#1a1a1a; padding:32px; }
+  h1 { font-size:11px; letter-spacing:0.15em; text-transform:uppercase; color:#999; margin-bottom:6px; }
+  .subtitle { font-size:20px; font-weight:600; margin-bottom:8px; }
+  .sub2 { font-size:13px; color:#888; margin-bottom:32px; }
+  .options { display:flex; flex-direction:column; gap:16px; max-width:900px; }
+  .option { background:white; border:2px solid transparent; border-radius:6px; overflow:hidden; cursor:pointer; transition:all 0.15s; }
+  .option:hover { border-color:#ccc; }
+  .option.selected { border-color:#1a1a1a; }
+  .opt-label { padding:14px 18px 12px; display:flex; align-items:center; gap:10px; }
+  .letter { width:24px; height:24px; background:#1a1a1a; color:white; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; }
+  .opt-title { font-weight:600; font-size:14px; }
+  .opt-desc { font-size:11px; color:#999; margin-left:auto; }
+  .preview { background:#fafaf8; border-top:1px solid #f0f0f0; position:relative; height:260px; overflow:hidden; }
+  .selected-pill { display:none; background:#1a1a1a; color:white; font-size:9px; letter-spacing:0.1em; text-transform:uppercase; padding:2px 8px; border-radius:2px; margin-left:8px; }
+  .option.selected .selected-pill { display:inline-block; }
+
+  /* Page shell */
+  .mock-hdr { height:44px; background:white; border-bottom:1px solid #ebebeb; display:flex; align-items:center; padding:0 20px; }
+  .mock-logo { font-size:11px; font-weight:900; letter-spacing:0.05em; text-transform:uppercase; }
+  .mock-nav { display:flex; gap:12px; font-size:8px; letter-spacing:0.1em; text-transform:uppercase; color:#888; margin-left:auto; }
+  .mock-nav .gold { color:#c8a96e; font-weight:600; }
+  .mock-body { padding:16px 20px; display:flex; gap:10px; }
+  .mock-prod { background:#ede9e3; border-radius:2px; flex:1; height:90px; }
+
+  /* Persistent bar */
+  .bar { position:absolute; bottom:0; left:0; right:0; height:48px; background:#1a1a1a; display:flex; align-items:center; padding:0 20px; gap:12px; z-index:10; }
+  .bar-label { font-size:8.5px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#c8a96e; white-space:nowrap; }
+  .bar-sep { width:1px; height:20px; background:rgba(255,255,255,0.1); }
+  .bar-input { flex:1; background:rgba(255,255,255,0.08); border:none; border-radius:2px; height:28px; padding:0 10px; font-size:9px; color:rgba(255,255,255,0.45); letter-spacing:0.04em; display:flex; align-items:center; }
+  .bar-btn { background:#c8a96e; color:white; border:none; padding:5px 12px; font-size:8px; letter-spacing:0.1em; text-transform:uppercase; border-radius:1px; white-space:nowrap; }
+
+  /* Option A overlay: expands above */
+  .overlay-chat { position:absolute; bottom:48px; left:0; right:0; height:160px; background:white; border-top:1px solid #e8e8e8; display:flex; flex-direction:column; }
+  .ov-msgs { flex:1; padding:12px 20px; display:flex; flex-direction:column; gap:8px; overflow:hidden; }
+  .ov-msg-user { background:#1a1a1a; color:white; padding:6px 10px; border-radius:2px; font-size:9px; align-self:flex-end; max-width:60%; }
+  .ov-msg-agent { background:#f5f2ed; color:#555; padding:6px 10px; border-radius:2px; font-size:9px; align-self:flex-start; max-width:70%; line-height:1.4; }
+  .ov-products { display:flex; gap:8px; padding:0 20px 10px; }
+  .ov-prod { background:#ede9e3; border-radius:2px; width:52px; height:64px; flex-shrink:0; }
+  .ov-prod-label { font-size:7px; color:#888; margin-top:3px; text-align:center; }
+
+  /* Option B: navigate to page */
+  .page-shopper { position:absolute; inset:0; background:white; display:flex; }
+  .ps-left { flex:1; background:#faf7f2; display:flex; flex-direction:column; }
+  .ps-hdr { padding:12px 16px; border-bottom:1px solid #ebe8e3; }
+  .ps-hdr-title { font-size:11px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; }
+  .ps-hdr-sub { font-size:8px; color:#c8a96e; letter-spacing:0.1em; text-transform:uppercase; margin-top:1px; }
+  .ps-msgs { flex:1; padding:12px 16px; display:flex; flex-direction:column; gap:8px; }
+  .ps-msg-user { background:#1a1a1a; color:white; padding:6px 10px; border-radius:2px; font-size:9px; align-self:flex-end; }
+  .ps-msg-agent { background:white; border:1px solid #ebe8e3; padding:6px 10px; border-radius:2px; font-size:9px; align-self:flex-start; color:#555; line-height:1.4; }
+  .ps-right { width:38%; background:#1a1a1a; display:flex; flex-direction:column; padding:12px 14px; }
+  .ps-flow-title { font-size:8px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#e5e5e5; margin-bottom:10px; }
+  .ps-flow-line { font-size:7.5px; color:#555; padding:5px 0; border-bottom:1px solid #222; font-family:monospace; }
+  .ps-flow-green { color:#4ade80; }
+  .ps-flow-blue { color:#60a5fa; }
+</style>
+</head>
+<body>
+<h1>Direction A · Option 3 · Barre B</h1>
+<p class="subtitle">Que se passe-t-il après "Envoyer" depuis la barre ?</p>
+<p class="sub2">Même barre en bas — comportement différent selon l'option.</p>
+
+<div class="options">
+
+  <!-- Option 1: Chat s'ouvre au-dessus de la barre -->
+  <div class="option" id="opt-1" onclick="pick('1')">
+    <div class="opt-label">
+      <div class="letter">1</div>
+      <div class="opt-title">Le chat s'ouvre au-dessus de la barre — overlay léger</div>
+      <span class="selected-pill">✓ Sélectionné</span>
+      <div class="opt-desc">L'utilisateur reste sur la page courante</div>
+    </div>
+    <div class="preview">
+      <div class="mock-hdr">
+        <span class="mock-logo">Jacquemus</span>
+        <div class="mock-nav"><span>Collections</span><span class="gold">Personal Shopper ✦</span><span>Panier</span></div>
+      </div>
+      <div class="mock-body">
+        <div class="mock-prod"></div><div class="mock-prod"></div><div class="mock-prod"></div>
+      </div>
+      <!-- overlay chat -->
+      <div class="overlay-chat">
+        <div class="ov-msgs">
+          <div class="ov-msg-user">Un sac iconique pour le quotidien</div>
+          <div class="ov-msg-agent">Du Bambino au Chiquito, voici les silhouettes qui ont fait la légende de la maison.</div>
+        </div>
+        <div class="ov-products">
+          <div style="display:flex;flex-direction:column;align-items:center"><div class="ov-prod"></div><div class="ov-prod-label">Le Bambino</div></div>
+          <div style="display:flex;flex-direction:column;align-items:center"><div class="ov-prod"></div><div class="ov-prod-label">Le Chiquito</div></div>
+          <div style="display:flex;flex-direction:column;align-items:center"><div class="ov-prod"></div><div class="ov-prod-label">Le Grand</div></div>
+        </div>
+      </div>
+      <div class="bar">
+        <span class="bar-label">Personal Shopper ✦</span>
+        <div class="bar-sep"></div>
+        <div class="bar-input">Un sac iconique pour le quotidien</div>
+        <button class="bar-btn">Envoyer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option 2: Redirige vers /personal-shopper -->
+  <div class="option" id="opt-2" onclick="pick('2')">
+    <div class="opt-label">
+      <div class="letter">2</div>
+      <div class="opt-title">Redirige vers la page Personal Shopper — expérience plein écran</div>
+      <span class="selected-pill">✓ Sélectionné</span>
+      <div class="opt-desc">Navigation + Technical Flow panel · Plus immersif</div>
+    </div>
+    <div class="preview">
+      <div class="page-shopper">
+        <div class="ps-left">
+          <div class="ps-hdr">
+            <div class="ps-hdr-title">Personal Shopper</div>
+            <div class="ps-hdr-sub">Jacquemus — Claude × Storefront MCP</div>
+          </div>
+          <div class="ps-msgs">
+            <div class="ps-msg-user">Un sac iconique pour le quotidien</div>
+            <div class="ps-msg-agent">Du Bambino au Chiquito, voici les silhouettes qui ont fait la légende de la maison — structurées et sensuelles.</div>
+            <div style="display:flex;gap:6px;margin-top:4px;">
+              <div style="background:#ede9e3;border-radius:2px;width:42px;height:52px;flex-shrink:0;"></div>
+              <div style="background:#ede9e3;border-radius:2px;width:42px;height:52px;flex-shrink:0;"></div>
+              <div style="background:#ede9e3;border-radius:2px;width:42px;height:52px;flex-shrink:0;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="ps-right">
+          <div class="ps-flow-title">Technical Flow</div>
+          <div class="ps-flow-line"><span class="ps-flow-green">▸</span> parse query → "bag"</div>
+          <div class="ps-flow-line"><span class="ps-flow-green">▸</span> search_catalog → MCP</div>
+          <div class="ps-flow-line"><span class="ps-flow-blue">◂</span> 3 produit(s) trouvés</div>
+          <div class="ps-flow-line"><span class="ps-flow-green">▸</span> claude-haiku → response</div>
+          <div class="ps-flow-line"><span class="ps-flow-blue">◂</span> end_turn</div>
+        </div>
+      </div>
+      <!-- bar still visible on page -->
+      <div class="bar" style="display:none"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let cur = null;
+  function pick(id) {
+    if (cur) document.getElementById('opt-' + cur).classList.remove('selected');
+    cur = id;
+    document.getElementById('opt-' + id).classList.add('selected');
+    try { window.parent.postMessage({type:'select',choice:id}, '*'); } catch(e){}
+  }
+</script>
+</body>
+</html>

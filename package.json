@@ -16,6 +16,7 @@
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.96.0",
     "@shopify/hydrogen": "2026.4.2",
     "graphql": "^16.10.0",
     "graphql-tag": "^2.12.6",

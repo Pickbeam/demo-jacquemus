@@ -40,9 +40,11 @@ type HeroCollection = {
 
 type HomepageProductsData = {
   nouveautes: {nodes: Array<GridProduct>};
-  sacs: {products: {nodes: Array<GridProduct>}} | null;
-  pretAPorter: {products: {nodes: Array<GridProduct>}} | null;
-  accessoires: {products: {nodes: Array<GridProduct>}} | null;
+  bag: {nodes: Array<GridProduct>};
+  dress: {nodes: Array<GridProduct>};
+  shoes: {nodes: Array<GridProduct>};
+  selection: {nodes: Array<GridProduct>};
+  bagSeason: {nodes: Array<GridProduct>};
 };
 
 const CURRENT_SEASON = 'SS 26';
@@ -239,21 +241,28 @@ function ProductSections({products}: {products: HomepageProductsData | null}) {
       />
       <ProductGridSection
         label="Sacs iconiques"
-        products={products.sacs?.products.nodes ?? []}
+        products={products.bag.nodes}
         cols={2}
-        collectionHandle="sacs"
       />
       <ProductGridSection
         label="Prêt-à-porter"
-        products={products.pretAPorter?.products.nodes ?? []}
+        products={products.dress.nodes}
         cols={4}
-        collectionHandle="pret-a-porter"
       />
       <ProductGridSection
-        label="Accessoires"
-        products={products.accessoires?.products.nodes ?? []}
+        label="Chaussures"
+        products={products.shoes.nodes}
         cols={2}
-        collectionHandle="accessoires"
+      />
+      <ProductGridSection
+        label="Les Favoris"
+        products={products.selection.nodes}
+        cols={4}
+      />
+      <ProductGridSection
+        label="Sacs de saison"
+        products={products.bagSeason.nodes}
+        cols={2}
       />
     </>
   );
@@ -296,14 +305,20 @@ const HOMEPAGE_PRODUCTS_QUERY = `#graphql
     nouveautes: products(first: 4, sortKey: UPDATED_AT, reverse: true) {
       nodes { ...GridProduct }
     }
-    sacs: collection(handle: "sacs") {
-      products(first: 2) { nodes { ...GridProduct } }
+    bag: products(first: 2, query: "product_type:bag") {
+      nodes { ...GridProduct }
     }
-    pretAPorter: collection(handle: "pret-a-porter") {
-      products(first: 4) { nodes { ...GridProduct } }
+    dress: products(first: 4, query: "product_type:dress") {
+      nodes { ...GridProduct }
     }
-    accessoires: collection(handle: "accessoires") {
-      products(first: 2) { nodes { ...GridProduct } }
+    shoes: products(first: 2, query: "product_type:shoes") {
+      nodes { ...GridProduct }
+    }
+    selection: products(first: 4, sortKey: BEST_SELLING) {
+      nodes { ...GridProduct }
+    }
+    bagSeason: products(first: 2, sortKey: BEST_SELLING, query: "product_type:bag") {
+      nodes { ...GridProduct }
     }
   }
 ` as const;

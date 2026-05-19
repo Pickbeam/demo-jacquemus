@@ -1,5 +1,5 @@
-import {Suspense, useState, useEffect} from 'react';
-import {Await, NavLink, useAsyncValue, useLocation} from 'react-router';
+import {Suspense} from 'react';
+import {Await, NavLink, useAsyncValue} from 'react-router';
 import {
   type CartViewPayload,
   useAnalytics,
@@ -24,32 +24,16 @@ export function Header({
   publicStoreDomain,
 }: HeaderProps) {
   const {shop, menu} = header;
-  const location = useLocation();
-  const isHome = location.pathname === '/' || /^\/[a-z]{2}(-[a-z]{2})?\/?\s*$/i.test(location.pathname);
-  const [scrolled, setScrolled] = useState(!isHome);
-
-  useEffect(() => {
-    if (!isHome) {
-      setScrolled(true);
-      return;
-    }
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', onScroll, {passive: true});
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [isHome]);
 
   return (
-    <header className={`header${!scrolled ? ' header--transparent' : ''}`}>
+    <header className="header">
       <NavLink prefetch="intent" to="/" end style={{lineHeight: 0}}>
         <img
           src="/jacquemus-logo.png"
           alt="Jacquemus"
           style={{
-            height: '18px',
+            height: '80px',
             display: 'block',
-            filter: scrolled ? 'none' : 'invert(1)',
-            transition: 'filter 0.3s ease',
           }}
         />
       </NavLink>
@@ -58,9 +42,9 @@ export function Header({
         viewport="desktop"
         primaryDomainUrl={header.shop.primaryDomain.url}
         publicStoreDomain={publicStoreDomain}
-        scrolled={scrolled}
+        scrolled={true}
       />
-      <HeaderCtas isLoggedIn={isLoggedIn} cart={cart} scrolled={scrolled} />
+      <HeaderCtas isLoggedIn={isLoggedIn} cart={cart} scrolled={true} />
     </header>
   );
 }

@@ -1,0 +1,7 @@
+{"type":"server-started","port":52439,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:52439","screen_dir":"/Users/belamrani/Projets/demo-jacquemus/.superpowers/brainstorm/94591-1778941653/content","state_dir":"/Users/belamrani/Projets/demo-jacquemus/.superpowers/brainstorm/94591-1778941653/state"}
+{"type":"screen-added","file":"/Users/belamrani/Projets/demo-jacquemus/.superpowers/brainstorm/94591-1778941653/content/header-direction.html"}
+{"type":"screen-added","file":"/Users/belamrani/Projets/demo-jacquemus/.superpowers/brainstorm/94591-1778941653/content/nav-options.html"}
+{"type":"screen-added","file":"/Users/belamrani/Projets/demo-jacquemus/.superpowers/brainstorm/94591-1778941653/content/chat-widget.html"}
+{"type":"screen-added","file":"/Users/belamrani/Projets/demo-jacquemus/.superpowers/brainstorm/94591-1778941653/content/bar-behavior.html"}
+{"type":"screen-added","file":"/Users/belamrani/Projets/demo-jacquemus/.superpowers/brainstorm/94591-1778941653/content/design-summary.html"}
+{"type":"server-stopped","reason":"owner process exited"}
