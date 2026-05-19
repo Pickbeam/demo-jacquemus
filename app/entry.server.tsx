@@ -1,6 +1,8 @@
 import {ServerRouter} from 'react-router';
 import {isbot} from 'isbot';
-import {renderToReadableStream} from 'react-dom/server';
+// react-dom/server.browser exports renderToReadableStream (Web Streams API),
+// which works on both Oxygen/Edge and Vercel Node.js 18+
+import {renderToReadableStream} from 'react-dom/server.browser';
 import {
   createContentSecurityPolicy,
   type HydrogenRouterContextProvider,
